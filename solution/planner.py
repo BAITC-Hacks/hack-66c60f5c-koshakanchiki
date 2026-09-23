@@ -1,8 +1,8 @@
 """Public-data campaign planning with exact final-contact accounting.
 
 The simulator returns the incremental net of the supplied final rows. Resources
-are *remaining* after pilots; it never charges pilot costs twice. The optimiser
-uses public pilot counts to integrate their unknown overlap in expectation.
+are *remaining* after pilots; it never charges pilot costs twice. The shipped MVA uses analytical cautious cell profit. The explicitly named
+posterior challenger is retained for audit; Agent does not call it.
 """
 from __future__ import annotations
 
@@ -273,7 +273,7 @@ def _compatible(candidate, chosen):
     return True
 
 
-def build_portfolio(beliefs, cell_stats, resources, k=1.0):
+def build_posterior_portfolio(beliefs, cell_stats, resources, k=1.0):
     """Return cautious profitable rows, using four starts and bounded swaps.
 
     Whole cells and data/call subgroups share the same action posterior. Exact
@@ -482,3 +482,46 @@ def build_portfolio(beliefs, cell_stats, resources, k=1.0):
             "channel": option.channel,
         })
     return result
+
+
+def _mva_row(key, channel, data=None, call=None):
+    current, segment, target = key
+    name = f'main_{current}_{segment}_{target}_{channel}_{data or "all"}_{call or "all"}'
+    return dict(zip(FIELDS, (name, segment, data, call, current, target, channel)))
+
+def build_portfolio(beliefs, stats, resources, k=1.0):
+    """Shipped MVA: three greedy starts with analytical cautious cell profit.
+
+    The posterior-overlap challenger below was rejected by the held-out P10
+    criterion. Keep the simple control as the production selection policy.
+    """
+    if time.monotonic() >= float(resources.get('deadline', math.inf)):
+        return []
+    variants = []
+    for key in sorted(beliefs.observed):
+        cell = stats.get(key[:2])
+        if not cell:
+            continue
+        n = min(cell['N'], 5000)
+        arpu = float(cell['prefix_arpu'][n])
+        for channel, cost in ((c, COST[c]) for c in FINAL_CHANNELS):
+            value = (beliefs.mean_ratio(key, channel) - k * beliefs.sd_ratio(key, channel)) * arpu - n * cost
+            if value > 0:
+                variants.append((value, key, channel, n, n * cost))
+    plans = []
+    for mode in ('net', 'contact', 'sms'):
+        remaining_h, remaining_b = int(resources['remaining_contacts']), float(resources['remaining_budget'])
+        used, selected = set(), []
+        order = sorted(variants, key=lambda v: (-(v[0] / v[3] if mode == 'contact' else v[0]), v[1], v[2]))
+        if mode == 'sms':
+            order.sort(key=lambda v: v[2] != 'sms')
+        for value, key, channel, n, cost in order:
+            if key[:2] in used or n > remaining_h or cost > remaining_b or len(selected) >= 10:
+                continue
+            selected.append((value, _mva_row(key, channel)))
+            used.add(key[:2])
+            remaining_h -= n
+            remaining_b -= cost
+        selected.sort(key=lambda pair: (-pair[0], pair[1]['campaign_name']))
+        plans.append((sum(v for v, _ in selected), [row for _, row in selected]))
+    return max(plans, key=lambda pair: pair[0])[1]
