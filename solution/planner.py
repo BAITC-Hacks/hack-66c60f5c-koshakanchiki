@@ -1,377 +1,484 @@
-"""Resource-exact campaign simulation and deterministic cautious portfolios.
+"""Public-data campaign planning with exact final-contact accounting.
 
-Only public profile data and pilot estimates enter this module. Scalar ratios
-are on the SMS scale; channel-specific quadruple keys are already scaled.
+The simulator returns the incremental net of the supplied final rows. Resources
+are *remaining* after pilots; it never charges pilot costs twice. The optimiser
+uses public pilot counts to integrate their unknown overlap in expectation.
 """
 from __future__ import annotations
 
-from collections.abc import Mapping
+from dataclasses import dataclass
 import math
 import time
+from typing import Any, Mapping
 
 import numpy as np
 import pandas as pd
 
-CHANNELS = {
-    "push": {"cost_per_contact": 0, "conversion_multiplier": .50},
-    "sms": {"cost_per_contact": 4, "conversion_multiplier": .65},
-    "digital_ads": {"cost_per_contact": 22, "conversion_multiplier": .85},
-    "call": {"cost_per_contact": 160, "conversion_multiplier": 1.20},
-}
-CAMPAIGN_COLUMNS = (
+COST = {"push": 0.0, "sms": 4.0, "digital_ads": 22.0, "call": 160.0}
+MULT = {"push": 0.50 / 0.65, "sms": 1.0, "digital_ads": 0.85 / 0.65, "call": 1.20 / 0.65}
+FINAL_CHANNELS = ("push", "sms", "digital_ads")
+FIELDS = (
     "campaign_name", "filter_arpu_segment", "filter_data_segment",
     "filter_call_segment", "filter_current_tariff", "target_tariff", "channel",
 )
-FILTERS = (
-    ("arpu_segment", "filter_arpu_segment"),
-    ("data_segment", "filter_data_segment"),
-    ("call_segment", "filter_call_segment"),
-)
 
 
-def _resource(resources, name, default):
-    if isinstance(resources, Mapping):
-        return resources.get(name, default)
-    return getattr(resources, name, default)
+def _present(value: Any) -> bool:
+    if value is None:
+        return False
+    try:
+        return bool(pd.notna(value))
+    except (TypeError, ValueError):
+        return False
 
 
-def _value(value):
-    return None if value is None or pd.isna(value) else value
+def _limits(resources: Mapping) -> tuple[float, int, int, int]:
+    budget = max(0.0, float(resources.get("remaining_budget", 100000)))
+    contacts = max(0, int(resources.get("remaining_contacts", 15000)))
+    rows = max(0, min(10, int(resources.get("max_campaigns", 10))))
+    cap = max(0, min(5000, int(resources.get("max_customers_per_campaign", 5000))))
+    return budget, contacts, rows, cap
 
 
-def _ratio(ratios, action, channel, channels):
-    """Raw d/q supports exact conversion saturation; SMS alone cannot infer call."""
-    if callable(ratios):
-        return float(ratios(action, channel))
-    if (*action, channel) in ratios:
-        return float(ratios[(*action, channel)])
-    estimate = ratios.get(action, 0.0)
-    multiplier = channels[channel]["conversion_multiplier"]
-    if isinstance(estimate, Mapping):
-        return float(estimate["arpu_change_pct"]) * min(
-            float(estimate["conversion_rate"]) * multiplier, 1.0)
-    if channel == "call" and action in ratios:
-        raise ValueError("Call requires a channel-specific ratio or raw conversion parameters")
-    return float(estimate) * multiplier / channels["sms"]["conversion_multiplier"]
+def _filter(profile: pd.DataFrame, row: Mapping) -> pd.DataFrame:
+    result = profile
+    for name in ("arpu_segment", "data_segment", "call_segment"):
+        value = row.get("filter_" + name)
+        if _present(value):
+            result = result[result[name] == value]
+    current = row.get("filter_current_tariff")
+    if _present(current):
+        tariffs = [part.strip() for part in str(current).split(";") if part.strip()]
+        result = result[result["current_tariff"].isin(tariffs)]
+    return result.sort_values("ID_NUMBER", kind="stable")
 
 
-class _Simulator:
-    """One-call cache: filter masks are reusable across full-plan evaluations."""
-
-    def __init__(self, profile, resources, ratios):
-        self.profile = profile.reset_index(drop=True)
-        self.resources = resources
-        self.ratios = ratios
-        self.channels = _resource(resources, "channels", CHANNELS)
-        self.id_codes, self.unique_ids = pd.factorize(self.profile["ID_NUMBER"], sort=True)
-        self.cache = {}
-        self.lift_cache = {}
-
-    def selection(self, row):
-        explicit = row.get("explicit_ids")
-        has_explicit = isinstance(explicit, (list, tuple, set, np.ndarray)) and len(explicit) > 0
-        signature = (("ids", tuple(sorted(explicit))) if has_explicit else
-                     tuple(_value(row.get(key)) for _, key in FILTERS) +
-                     (_value(row.get("filter_current_tariff")),))
-        if signature not in self.cache:
-            segment = self.profile
-            if has_explicit:
-                segment = segment[segment["ID_NUMBER"].isin(explicit)]
-            else:
-                for column, key in FILTERS:
-                    value = _value(row.get(key))
-                    if value is not None:
-                        segment = segment[segment[column] == value]
-                tariff = _value(row.get("filter_current_tariff"))
-                if tariff is not None:
-                    wanted = [part.strip() for part in str(tariff).split(";") if part.strip()]
-                    segment = segment[segment["current_tariff"].isin(wanted)]
-            self.cache[signature] = segment.sort_values("ID_NUMBER").index.to_numpy()
-        return signature, self.cache[signature]
-
-    def lifts(self, row, signature, positions):
-        key = (signature, row["target_tariff"], row["channel"])
-        if key not in self.lift_cache:
-            segment = self.profile.iloc[positions[:5000]]
-            result = np.zeros(len(segment), dtype=float)
-            for cell, offsets in segment.groupby(["current_tariff", "arpu_segment"],
-                                                 dropna=False).indices.items():
-                action = (*cell, row["target_tariff"])
-                ratio = _ratio(self.ratios, action, row["channel"], self.channels)
-                values = segment.iloc[offsets]["predicted_arpu"].to_numpy(dtype=float) * ratio
-                result[offsets] = np.where(np.isnan(values), 0.0, values)
-            self.lift_cache[key] = result
-        return self.lift_cache[key]
-
-    def run(self, rows):
-        budget = float(_resource(self.resources, "remaining_budget", 100000))
-        contacts = int(_resource(self.resources, "remaining_contacts", 15000))
-        total_cost, total_contacts = 0.0, 0
-        best = np.full(len(self.unique_ids), -np.inf)
-        details, selected_ids, selected_positions = [], [], []
-        for index, row in enumerate(rows):
-            channel = row["channel"]
-            cost = self.channels[channel]["cost_per_contact"]
-            signature, positions = self.selection(row)
-            n = len(positions)
-            campaign_cap = n > 5000
-            n = min(n, 5000)
-            reach_cap = n > contacts
-            n = min(n, max(contacts, 0))
-            money_cap = cost > 0 and n > int(budget // cost)
-            if cost > 0:
-                n = min(n, max(int(budget // cost), 0))
-            campaign_cost = n * cost
-            contacts -= n
-            budget -= campaign_cost
-            total_contacts += n
-            total_cost += campaign_cost
-            positions = positions[:n]
-            lifts = self.lifts(row, signature, self.cache[signature])[:n]
-            codes = self.id_codes[positions]
-            valid = codes >= 0  # official groupby excludes missing IDs
-            np.maximum.at(best, codes[valid], lifts[valid])
-            selected_ids.append(self.profile.iloc[positions]["ID_NUMBER"].to_numpy())
-            selected_positions.append(positions)
-            details.append({
-                "name": row.get("campaign_name", f"campaign_{index}"),
-                "channel": channel, "cost": campaign_cost, "n_contacts": n,
-                "gross_lift": float(lifts.sum()), "n_negative": int((lifts < 0).sum()),
-                "capped_at_campaign_limit": campaign_cap,
-                "capped_at_reach_budget": reach_cap,
-                "capped_at_money_budget": money_cap,
-            })
-        contacted = best != -np.inf
-        gross = float(best[contacted].sum())
-        net = gross - total_cost
-        return net, {
-            "net_arpu_gain": net, "gross_arpu_lift": gross,
-            "total_cost": total_cost, "total_contacts": total_contacts,
-            "unique_customers_targeted": int(contacted.sum()),
-            "campaigns_detail": details, "selected_ids": selected_ids,
-            "selected_positions": selected_positions,
-            "remaining_budget": budget, "remaining_contacts": contacts,
-        }
-
-
-def simulate_plan(profile, rows, resources, ratios):
-    """Return (net, detail), applying official filters, ID caps and max dedup.
-
-    resources contains remaining_budget/remaining_contacts AFTER pilots, with
-    optional channels. No pilot costs are subtracted here. Ratios map
-    (from_tariff, arpu_segment, target) to an SMS ratio or to raw
-    {arpu_change_pct, conversion_rate}; a four-tuple ending in channel provides
-    an already scaled ratio. Missing estimates are zero. Call needs raw or
-    explicit channel ratios because its saturation is not identifiable by SMS.
-    """
-    return _Simulator(profile, resources, ratios).run(rows)
-
-
-def _profile_from_stats(stats):
-    """Whole cells can be planned without the optional original profile."""
-    frames = []
-    for (tariff, segment), cell in sorted(stats.items()):
-        ids = np.asarray(cell["ids_sorted"])
-        prefix = np.asarray(cell["prefix_arpu"], dtype=float)
-        if len(prefix) != len(ids) + 1 or prefix[0] != 0:
-            raise ValueError("prefix_arpu must have N+1 entries, starting with 0")
-        frames.append(pd.DataFrame({
-            "ID_NUMBER": ids, "current_tariff": tariff, "arpu_segment": segment,
-            "data_segment": None, "call_segment": None,
-            "predicted_arpu": np.diff(prefix),
-        }))
-    return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=[
-        "ID_NUMBER", "current_tariff", "arpu_segment", "data_segment",
-        "call_segment", "predicted_arpu",
-    ])
-
-
-def _estimates(beliefs, resources, k, channels):
-    states = beliefs if isinstance(beliefs, Mapping) else getattr(beliefs, "states", None)
-    if isinstance(states, Mapping):
-        measured = [a for a, s in states.items() if s["n"] > 0]
-        all_actions = list(states)
+def _ratio(source: Any, key: tuple, channel: str) -> float:
+    if hasattr(source, "mean_ratio"):
+        value = source.mean_ratio(key, channel)
     else:
-        measured = _resource(resources, "piloted_actions", getattr(beliefs, "observed", None))
-        if measured is None:
-            raise ValueError("Beliefs object needs resources['piloted_actions'], .observed or .states")
-        measured = [tuple(a) for a in measured]
-        all_actions = measured
-    ratios = {}
-    for action in sorted(set(all_actions)):
-        for channel in ("push", "sms", "digital_ads"):
-            if isinstance(beliefs, Mapping):
-                state = beliefs[action]
-                mu, var = float(state["mu"]), float(state["var"])
-                if not math.isfinite(mu) or not math.isfinite(var) or var < 0:
-                    raise ValueError(f"Invalid posterior for {action!r}")
-                scale = channels[channel]["conversion_multiplier"] / channels["sms"]["conversion_multiplier"]
-                mean, sd = mu * scale, math.sqrt(var) * scale
-            else:
-                mean = float(beliefs.mean_ratio(action, channel))
-                sd = float(beliefs.sd_ratio(action, channel))
-                if not math.isfinite(mean) or not math.isfinite(sd) or sd < 0:
-                    raise ValueError(f"Invalid channel posterior for {action!r}")
-            # Unmeasured actions may only serve as a broad-prior fallback.
-            if action not in measured:
-                mean = 0.
-                sd = .25 * channels[channel]["conversion_multiplier"] / channels["sms"]["conversion_multiplier"]
-            ratios[(*action, channel)] = mean - k * sd
-    return sorted(set(measured)), sorted(set(all_actions)), ratios
+        # Explicit channel estimates take precedence; plain action keys are SMS.
+        value = source.get((key, channel), None)
+        if value is None:
+            value = source.get((*key, channel), None)
+        if value is None:
+            value = float(source.get(key, 0.0)) * MULT[channel]
+    value = float(value)
+    return value if math.isfinite(value) else 0.0
 
 
-def _rows_for_actions(profile, actions, subgroups=True):
-    for action in actions:
-        source, segment, target = action
-        if source == target:
+def simulate_plan(profile, rows, resources, ratios_or_beliefs):
+    """Apply public filters/caps in order and deduplicate *signed* monetary lift.
+
+    ``ratios_or_beliefs`` may be Beliefs or a mapping from action triples to SMS
+    ratios. A ``(action_key, channel)`` mapping key supplies a channel ratio.
+    Unknown pilot IDs are not invented here. The returned detail contains exact
+    final IDs, expenditures and per-ID best lift for audit against the scorer.
+    """
+    budget, reach, max_rows, cap = _limits(resources)
+    total_cost = 0.0
+    total_contacts = 0
+    best = {}
+    details = []
+    for index, row in enumerate(list(rows)[:max_rows]):
+        channel = row.get("channel")
+        if channel not in COST:
+            raise ValueError("Unknown channel: %r" % channel)
+        segment = _filter(profile, row)
+        capped_campaign = len(segment) > cap
+        segment = segment.iloc[:cap]
+        capped_reach = len(segment) > reach
+        segment = segment.iloc[:reach]
+        price = COST[channel]
+        affordable = max(0, int(budget // price)) if price else len(segment)
+        capped_money = len(segment) > affordable
+        segment = segment.iloc[:affordable]
+        count = len(segment)
+        cost = count * price
+        budget -= cost
+        reach -= count
+        total_cost += cost
+        total_contacts += count
+        lifts = []
+        for current, arpu, ident, baseline in segment[
+            ["current_tariff", "arpu_segment", "ID_NUMBER", "predicted_arpu"]
+        ].itertuples(index=False, name=None):
+            ratio = _ratio(ratios_or_beliefs, (current, arpu, row["target_tariff"]), channel)
+            lift = ratio * float(baseline)
+            if not math.isfinite(lift):
+                lift = 0.0
+            lifts.append(lift)
+            # A first negative contact must stay negative (no implicit zero arm).
+            if ident not in best or lift > best[ident]:
+                best[ident] = lift
+        details.append({
+            "name": row.get("campaign_name", "campaign_%d" % index),
+            "channel": channel, "cost": cost, "n_contacts": count,
+            "gross_lift": float(sum(lifts)),
+            "n_negative": sum(value < 0 for value in lifts),
+            "ids": segment["ID_NUMBER"].tolist(),
+            "capped_at_campaign_limit": capped_campaign,
+            "capped_at_reach_budget": capped_reach,
+            "capped_at_money_budget": capped_money,
+        })
+    gross = float(sum(best.values()))
+    net = gross - total_cost
+    return net, {
+        "gross_arpu_lift": gross, "total_cost": total_cost,
+        "total_contacts": total_contacts, "unique_customers_targeted": len(best),
+        "net_arpu_gain": net, "remaining_budget": budget,
+        "remaining_contacts": reach, "campaigns_detail": details,
+        "best_lift_by_id": best,
+    }
+
+
+@dataclass(frozen=True, eq=False)
+class _Audience:
+    cell: tuple
+    data: Any
+    calls: Any
+    prefix: np.ndarray
+
+    @property
+    def size(self):
+        return len(self.prefix) - 1
+
+
+@dataclass(frozen=True, eq=False)
+class _Option:
+    action: tuple
+    audience: _Audience
+    channel: str
+    delta: np.ndarray
+    cautious_ratio: float
+    full_net: float
+
+    @property
+    def key(self):
+        return (*self.action, str(self.audience.data or ""),
+                str(self.audience.calls or ""), self.channel)
+
+
+def _audiences(stats, profile, cap, expired=lambda: False):
+    """Only exportable filters; no arbitrary ID exclusions or final n field."""
+    result = {}
+    for cell in sorted(stats, key=lambda x: tuple(map(str, x))):
+        if expired():
+            break
+        stat = stats[cell]
+        prefix = np.asarray(stat["prefix_arpu"], dtype=float)
+        # The contracted prefix includes a leading zero.
+        if len(prefix) != int(stat["N"]) + 1:
+            raise ValueError("prefix_arpu must have N+1 entries, starting at zero")
+        result[cell] = [_Audience(cell, None, None, prefix[:cap + 1])]
+    if not result or expired() or profile is None or not {"data_segment", "call_segment"}.issubset(profile.columns):
+        return result
+    # Replanning is frequent during exploration; construct subgroup prefixes
+    # only for cells with an observed action that passed the cautious cutoff.
+    cell_index = pd.MultiIndex.from_frame(profile[["current_tariff", "arpu_segment"]])
+    eligible = profile.loc[cell_index.isin(result)]
+    grouped = eligible.groupby(
+        ["current_tariff", "arpu_segment"], sort=True, observed=True)
+    for cell, group in grouped:
+        if expired():
+            break
+        if cell not in result:
             continue
-        cell = profile[(profile.current_tariff == source) & (profile.arpu_segment == segment)]
-        if cell.empty:
-            continue
-        data_values = [None]
-        call_values = [None]
-        if subgroups:
-            data_values += sorted(set(cell.data_segment.dropna()) & {"NON_USER", "LITE", "HEAVY"})
-            call_values += sorted(set(cell.call_segment.dropna()) & {"LOW", "MEDIUM", "HIGH"})
-        seen = set()
-        for data in data_values:
-            for call in call_values:
-                part = cell
-                if data is not None:
-                    part = part[part.data_segment == data]
-                if call is not None:
-                    part = part[part.call_segment == call]
-                mask = frozenset(part.index)
-                if not mask or mask in seen:
+        group = group.sort_values("ID_NUMBER", kind="stable")
+        data_values = sorted(group["data_segment"].dropna().unique(), key=str)
+        call_values = sorted(group["call_segment"].dropna().unique(), key=str)
+        seen = {tuple(group.iloc[:cap]["ID_NUMBER"])}
+        for data in [None] + data_values:
+            for calls in [None] + call_values:
+                if data is None and calls is None:
                     continue
-                seen.add(mask)
-                row = dict(zip(CAMPAIGN_COLUMNS, (
-                    "candidate", segment, data, call, source, target, "push")))
-                yield action, row, mask
+                part = group
+                if data is not None:
+                    part = part[part["data_segment"] == data]
+                if calls is not None:
+                    part = part[part["call_segment"] == calls]
+                part = part.iloc[:cap]
+                ids = tuple(part["ID_NUMBER"])
+                if not ids or ids in seen:
+                    continue
+                seen.add(ids)
+                values = pd.to_numeric(part["predicted_arpu"], errors="coerce").fillna(0.0).to_numpy(dtype=float)
+                prefix = np.r_[0.0, np.cumsum(values)]
+                result[cell].append(_Audience(cell, data, calls, prefix))
+    return result
 
 
-def _sort_and_check(simulator, rows):
-    """Sorting can change capped prefixes, so re-evaluate until order is valid."""
-    seen = set()
-    while rows:
-        _, detail = simulator.run(rows)
-        gains = [r["gross_lift"] - r["cost"] for r in detail["campaigns_detail"]]
-        kept = [i for i, r in enumerate(detail["campaigns_detail"])
-                if r["n_contacts"] > 0 and gains[i] > 0]
-        order = sorted(kept, key=lambda i: (-gains[i], i))
-        if order == list(range(len(rows))):
-            return rows
-        signature = tuple(tuple(row.get(key) for key in CAMPAIGN_COLUMNS[1:]) for row in rows)
-        if signature in seen:
-            # Rare cap-induced ordering cycle: retain the stronger rows.
-            order = order[:-1]
-            seen.clear()
-        else:
-            seen.add(signature)
-        rows = [rows[i] for i in order]
-    return []
+def _expected_best(ratios, probabilities, n_draws):
+    """Expected max of contacted effects, without adding a fictitious zero."""
+    if not ratios:
+        return np.zeros(n_draws, dtype=float)
+    matrix = np.asarray(ratios, dtype=float).T
+    order = np.argsort(-matrix, axis=1, kind="stable")
+    ordered_ratio = np.take_along_axis(matrix, order, axis=1)
+    probs = np.broadcast_to(np.asarray(probabilities), matrix.shape)
+    ordered_prob = np.take_along_axis(probs, order, axis=1)
+    missed = np.cumprod(1.0 - ordered_prob, axis=1)
+    before = np.c_[np.ones(n_draws), missed[:, :-1]]
+    return np.sum(ordered_ratio * ordered_prob * before, axis=1)
+
+
+def _pilot_model(beliefs, stats, resources, theta, lookup):
+    """Integrate random pilot membership using only recorded public counts."""
+    n_draws = theta.shape[0]
+    groups = {}
+    pilot_cost = 0.0
+    for entry in resources.get("pilot_log", []):
+        key = entry.get("action_key")
+        if key is None:
+            continue
+        key = tuple(key)
+        cell = key[:2]
+        actual = int(entry.get("actual_n", entry.get("result", {}).get("n_customers", 0)) or 0)
+        channel = entry.get("channel", "sms")
+        if actual <= 0 or cell not in stats or channel not in MULT:
+            continue
+        pilot_cost += float(entry.get("cost", actual * COST[channel]))
+        if key not in lookup:
+            continue
+        count = int(stats[cell]["N"])
+        if count <= 0:
+            continue
+        group = groups.setdefault(cell, {})
+        pair = (key, channel)
+        group[pair] = group.get(pair, 1.0) * (1.0 - min(actual, count) / count)
+    baseline = np.full(n_draws, -pilot_cost, dtype=float)
+    cell_models = {}
+    for cell, group in groups.items():
+        ratios = [theta[:, lookup[key]] * MULT[channel] for key, channel in group]
+        probs = [1.0 - never for never in group.values()]
+        old = _expected_best(ratios, probs, n_draws)
+        baseline += old * float(stats[cell]["A_sum"])
+        cell_models[cell] = (ratios, probs, old)
+    return baseline, cell_models
+
+
+def _compatible(candidate, chosen):
+    a = candidate.audience
+    for other in chosen:
+        b = other.audience
+        if a.cell != b.cell:
+            continue
+        # Multiple subgroups may use different channels, but one target per cell.
+        if candidate.action != other.action:
+            return False
+        data_overlap = a.data is None or b.data is None or a.data == b.data
+        call_overlap = a.calls is None or b.calls is None or a.calls == b.calls
+        if data_overlap and call_overlap:
+            return False
+    return True
 
 
 def build_portfolio(beliefs, cell_stats, resources, k=1.0):
-    """Build 1..10 cautious campaigns using only public pilot posteriors.
+    """Return cautious profitable rows, using four starts and bounded swaps.
 
-    FROZEN BELIEFS CONTRACT (two supported forms):
-      * dict[(from_tariff, arpu_segment, target)] =
-        {"mu": float, "var": float, "n": int}. mu/var are on the SMS scale;
-        n is the number of valid observed customers. Only n>0 may be scaled.
-      * object with mean_ratio(action_key, channel) and
-        sd_ratio(action_key, channel), both ALREADY scaled to that channel.
-        Supply measured action keys in resources["piloted_actions"], or expose
-        the public iterable .observed. A public .states mapping with the dict
-        schema above may supply those keys instead.
-        The methods alone cannot enumerate which actions have been piloted.
-
-    cell_stats maps (from_tariff, arpu_segment) to N, A_sum, ids_sorted and
-    prefix_arpu (length N+1, first entry 0). resources contains
-    remaining_budget/remaining_contacts AFTER pilots and optional channels,
-    profile, deadline (time.monotonic). profile enables data/call subgroups;
-    without it the exact whole-cell ID prefixes are reconstructed from stats.
-    All state is local to this call. Inputs are never mutated.
-
-    For each actual affordable ID prefix and channel, cautious_net is
-    (mean_ratio - k*sd_ratio)*sum(prefix ARPU) - n*cost. Choose the channel
-    with maximum positive cautious_net, then greedily select by net/contact.
-    Final masks do not overlap and use one target per cell. Sort by final net
-    and re-simulate after sorting. Call is disabled. Pilot costs are already
-    sunk and do not veto profitable additions; pilot overlap uncertainty is
-    not modeled by this MVA objective.
-
-    If no positive measured action exists, return the least harmful single
-    filterable push/SMS/ads row as the mandatory fallback (may be negative).
-    With no audience, action keys or contacts, return [] so the caller can
-    handle an impossible final campaign explicitly.
+    Whole cells and data/call subgroups share the same action posterior. Exact
+    prefix ARPU is used for every budget/reach truncation. All candidate plans
+    use the same 64 posterior draws and expected pilot overlap. Only observed
+    actions are eligible, even with k=0 or a positive custom prior. No call.
     """
-    if not math.isfinite(k) or k < 0:
-        raise ValueError("k must be finite and nonnegative")
-    channels = _resource(resources, "channels", CHANNELS)
-    budget = float(_resource(resources, "remaining_budget", 100000))
-    contacts = int(_resource(resources, "remaining_contacts", 15000))
-    if contacts <= 0:
+    deadline = resources.get("deadline")
+    deadline = math.inf if deadline is None else float(deadline)
+
+    def expired():
+        return time.monotonic() >= deadline
+
+    budget, reach, max_rows, cap = _limits(resources)
+    if expired() or not reach or not max_rows or not cap or not cell_stats:
         return []
-    profile = _resource(resources, "profile", None)
-    if profile is None:
-        profile = _profile_from_stats(cell_stats)
-    else:
-        profile = profile.reset_index(drop=True)
-    if profile.empty:
+    actions = tuple(sorted(beliefs.actions, key=lambda a: tuple(map(str, a))))
+    if not actions:
         return []
-    measured, all_actions, ratios = _estimates(beliefs, resources, k, channels)
-    base_resources = dict(remaining_budget=budget, remaining_contacts=contacts, channels=channels)
-    simulator = _Simulator(profile, base_resources, ratios)
-    subgroups = _resource(resources, "subgroup_limit", 1) != 0
-    pool = list(_rows_for_actions(profile, measured, subgroups))
-    deadline = float(_resource(resources, "deadline", math.inf))
-    selected, used, targets = [], set(), {}
-    while len(selected) < 10 and contacts > 0:
-        best = None
-        simulator.resources = dict(remaining_budget=budget, remaining_contacts=contacts, channels=channels)
-        for action, template, mask in pool:
-            if time.monotonic() >= deadline and best is not None:
-                break
-            if mask & used or (action[:2] in targets and targets[action[:2]] != action[2]):
+    observed = getattr(beliefs, "observed", None)
+    if observed is None:
+        observed = {
+            tuple(entry["action_key"]) for entry in resources.get("pilot_log", [])
+            if entry.get("action_key") and int(entry.get("actual_n", 0) or 0) > 0
+        }
+    eligible_actions = [
+        key for key in actions
+        if key in observed and key[:2] in cell_stats and
+        float(beliefs.mean_ratio(key, "sms")) - k * float(beliefs.sd_ratio(key, "sms")) > 0
+    ]
+    if not eligible_actions or expired():
+        return []
+    lookup = {key: i for i, key in enumerate(actions)}
+    n_draws = 64
+    # Beliefs.draws columns follow Beliefs.actions; remap explicitly if needed.
+    raw = np.asarray(beliefs.draws(n_draws, seed=42), dtype=float)
+    native_actions = tuple(beliefs.actions)
+    native_index = {key: i for i, key in enumerate(native_actions)}
+    theta = raw[:, [native_index[key] for key in actions]]
+    if theta.shape != (n_draws, len(actions)) or not np.isfinite(theta).all():
+        raise ValueError("Beliefs.draws returned invalid posterior samples")
+    baseline, pilot_models = _pilot_model(beliefs, cell_stats, resources, theta, lookup)
+    eligible_cells = {key[:2] for key in eligible_actions}
+    eligible_stats = {cell: cell_stats[cell] for cell in eligible_cells}
+    audiences = _audiences(eligible_stats, resources.get("profile"), cap, expired)
+    options = []
+    for key in eligible_actions:
+        if expired():
+            break
+        if key[:2] not in audiences:
+            continue
+        for channel in FINAL_CHANNELS:
+            price = COST[channel]
+            caution = float(beliefs.mean_ratio(key, channel)) - k * float(beliefs.sd_ratio(key, channel))
+            if not math.isfinite(caution) or caution <= 0:
                 continue
-            channel_best = None
-            for channel in ("push", "sms", "digital_ads"):
-                row = {**template, "channel": channel}
-                net, detail = simulator.run([row])
-                n = detail["total_contacts"]
-                if n > 0 and net > 0 and (channel_best is None or net > channel_best[0]):
-                    channel_best = (net, n, row, detail)
-            if channel_best is None:
-                if time.monotonic() >= deadline:
+            ratio_draws = theta[:, lookup[key]] * MULT[channel]
+            if key[:2] in pilot_models:
+                pilot_ratios, probs, old = pilot_models[key[:2]]
+                delta = _expected_best(pilot_ratios + [ratio_draws], probs + [1.0], n_draws) - old
+            else:
+                delta = ratio_draws
+            for audience in audiences[key[:2]]:
+                count = min(audience.size, reach)
+                if price:
+                    count = min(count, int(budget // price))
+                if count <= 0:
+                    continue
+                cautious = caution * audience.prefix[count] - count * price
+                if cautious <= 0:
+                    continue
+                options.append(_Option(key, audience, channel, delta, caution, float(cautious)))
+    if not options:
+        return []
+    options.sort(key=lambda opt: (-opt.full_net, opt.key))
+
+    def evaluate(plan):
+        # Sort by complete-prefix cautious net; recompute every affected prefix.
+        ordered = sorted(plan, key=lambda opt: (-opt.full_net, opt.key))
+        left_money, left_reach = budget, reach
+        samples = baseline.copy()
+        executed = []
+        cost = 0.0
+        for option in ordered[:max_rows]:
+            price = COST[option.channel]
+            count = min(option.audience.size, left_reach)
+            if price:
+                count = min(count, int(left_money // price))
+            if count <= 0:
+                continue
+            amount = float(option.audience.prefix[count])
+            # Truncation can change average ARPU; check the real prefix again.
+            if option.cautious_ratio * amount - count * price <= 0:
+                return -math.inf, [], 0, 0.0
+            charge = count * price
+            samples += option.delta * amount - charge
+            cost += charge
+            left_money -= charge
+            left_reach -= count
+            executed.append(option)
+        utility = float(samples.mean() - k * samples.std())
+        return utility, executed, reach - left_reach, cost
+
+    def signature(plan):
+        return tuple(option.key for option in plan)
+
+    base_utility = float(baseline.mean() - k * baseline.std())
+    best_value, best_plan = base_utility, []
+    # The SMS start is subsequently upgraded by the same neighbourhood search.
+    for mode in range(4):
+        if expired():
+            break
+        chosen = []
+        utility = base_utility
+        for _ in range(max_rows):
+            if expired():
+                break
+            winner = None
+            winner_rank = -math.inf
+            _, _, old_used, old_expense = evaluate(chosen)
+            for option in options:
+                if expired():
                     break
-                continue
-            net, n, row, detail = channel_best
-            rank = (net / n, net)
-            if best is None or rank > best[0]:
-                best = (rank, action, row, mask, detail)
-        if best is None:
-            break
-        _, action, row, mask, detail = best
-        selected.append(row)
-        used.update(mask)
-        targets[action[:2]] = action[2]
-        budget, contacts = detail["remaining_budget"], detail["remaining_contacts"]
-        if time.monotonic() >= deadline:
-            break
-    simulator.resources = base_resources
-    selected = _sort_and_check(simulator, selected)
-    if not selected:
-        # A sunk loss never triggers this path if a useful multirow plan exists.
-        fallback = None
-        for _, template, _ in _rows_for_actions(profile, all_actions, subgroups):
-            for channel in ("push", "sms", "digital_ads"):
-                row = {**template, "channel": channel}
-                net, detail = simulator.run([row])
-                if detail["total_contacts"] and (fallback is None or net > fallback[0]):
-                    fallback = (net, row)
-            if fallback is not None and time.monotonic() >= deadline:
+                if mode == 3 and option.channel != "sms":
+                    continue
+                if not _compatible(option, chosen):
+                    continue
+                value, result, used, expense = evaluate(chosen + [option])
+                gain = value - utility
+                if gain <= 1e-8 or len(result) <= len(chosen):
+                    continue
+                additional_n = max(1, used - old_used)
+                additional_cost = max(0.0, expense - old_expense)
+                denominator = 1.0
+                if mode == 1:
+                    denominator = additional_n
+                elif mode == 2:
+                    denominator = additional_n / max(reach, 1) + 1.0 / max_rows
+                    if budget:
+                        denominator += additional_cost / budget
+                rank = gain / denominator
+                if rank > winner_rank + 1e-8:
+                    winner = (value, result)
+                    winner_rank = rank
+            if winner is None:
                 break
-        selected = [fallback[1]] if fallback else []
-    return [{**row, "campaign_name": f"campaign_{i}"}
-            for i, row in enumerate(selected, 1)]
+            utility, chosen = winner
+        if utility > best_value + 1e-8 or (
+            utility == best_value and chosen and (not best_plan or signature(chosen) < signature(best_plan))
+        ):
+            best_value, best_plan = utility, chosen
+    if not best_plan:
+        return []
+
+    # Bounded deterministic neighbourhood: remove a row or replace one row.
+    # Rank a short list but retain every selected option's same-audience channels.
+    shortlist = options[:72]
+    for candidate in options:
+        if expired():
+            break
+        if any(candidate.audience is old.audience for old in best_plan) and candidate not in shortlist:
+            shortlist.append(candidate)
+    attempts = 0
+    for _round in range(2):
+        if expired():
+            break
+        improved = False
+        # Evaluate the neighbourhood of one fixed incumbent, then begin the
+        # next round from its best improvement. best_value never decreases.
+        original = list(best_plan)
+        for removed in range(len(original)):
+            if expired():
+                break
+            rest = original[:removed] + original[removed + 1:]
+            if rest:
+                value, trial, _, _ = evaluate(rest)
+                if value > best_value + 1e-8:
+                    best_value, best_plan = value, trial
+                    improved = True
+            for candidate in shortlist:
+                attempts += 1
+                if attempts > 768 or expired():
+                    break
+                if not _compatible(candidate, rest):
+                    continue
+                value, trial, _, _ = evaluate(rest + [candidate])
+                if value > best_value + 1e-8:
+                    best_value, best_plan = value, trial
+                    improved = True
+            if attempts > 768:
+                break
+        if not improved or attempts > 768:
+            break
+
+    _, best_plan, _, _ = evaluate(best_plan)
+    result = []
+    for index, option in enumerate(best_plan, 1):
+        current, segment, target = option.action
+        result.append({
+            "campaign_name": "campaign_%02d_%s_%s" % (index, current, segment),
+            "filter_arpu_segment": segment,
+            "filter_data_segment": option.audience.data,
+            "filter_call_segment": option.audience.calls,
+            "filter_current_tariff": current,
+            "target_tariff": target,
+            "channel": option.channel,
+        })
+    return result
