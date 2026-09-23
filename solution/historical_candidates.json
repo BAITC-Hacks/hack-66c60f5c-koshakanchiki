@@ -1,0 +1,3665 @@
+{
+  "schema_version": 1,
+  "schema": {
+    "action_key": [
+      "from_tariff",
+      "arpu_segment",
+      "target"
+    ],
+    "aggregate": {
+      "from_tariff": "string",
+      "arpu_segment": "LOW|MID|HIGH",
+      "target": "string",
+      "support": "positive integer",
+      "median": "float in [-1, 3]",
+      "rank": "float"
+    }
+  },
+  "method": {
+    "deduplication": "exact duplicates across all source columns",
+    "filter": "AVG_ARPU_PREV_3M >= 100",
+    "segments": {
+      "bins": [
+        "-inf",
+        1000,
+        5000,
+        "inf"
+      ],
+      "labels": [
+        "LOW",
+        "MID",
+        "HIGH"
+      ],
+      "right": true
+    },
+    "smoothing_support": 10,
+    "formula": "rank = support / (support + 10) * median; median = median(clip(AVG_ARPU_NEXT_3M / AVG_ARPU_PREV_3M - 1, -1, 3))"
+  },
+  "source": "change_tariff.csv",
+  "source_sha256": "c52d7dad11fccc7425afe6d36a44a1fa03c8cc148be2039ce264d0c5c100f230",
+  "source_columns": [
+    "TIME_KEY",
+    "AVG_ARPU_PREV_3M",
+    "AVG_ARPU_NEXT_3M",
+    "ID_NUMBER",
+    "tariff_plan_code_from",
+    "tariff_plan_code_to"
+  ],
+  "counts": {
+    "source_rows": 14823,
+    "exact_duplicates_removed": 6,
+    "rows_below_100_removed": 2118,
+    "eligible_rows": 12699,
+    "aggregate_count": 451
+  },
+  "aggregates": [
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 14,
+      "median": 3.0,
+      "rank": 1.75
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 2,
+      "median": 1.2661970226340573,
+      "rank": 0.21103283710567622
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 22,
+      "median": 2.377115882490118,
+      "rank": 1.6342671692119564
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "LOW",
+      "target": "tariff_21",
+      "support": 10,
+      "median": -0.21966814620296765,
+      "rank": -0.10983407310148383
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 35,
+      "median": 3.0,
+      "rank": 2.3333333333333335
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 71,
+      "median": 3.0,
+      "rank": 2.6296296296296298
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 81,
+      "median": 3.0,
+      "rank": 2.67032967032967
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 26,
+      "median": 0.8370520447349055,
+      "rank": 0.6045375878640984
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 12,
+      "median": 0.9092855714448898,
+      "rank": 0.49597394806084893
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 2,
+      "median": 1.8147211636380423,
+      "rank": 0.302453527273007
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 66,
+      "median": 0.12945083129223078,
+      "rank": 0.112417827174832
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "MID",
+      "target": "tariff_21",
+      "support": 5,
+      "median": 0.7151105414931112,
+      "rank": 0.2383701804977037
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 51,
+      "median": 0.6657704191746932,
+      "rank": 0.5566277275067107
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 125,
+      "median": 0.5175258421983961,
+      "rank": 0.47919059462814456
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 27,
+      "median": 1.4987082609577382,
+      "rank": 1.0936519742124036
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 9,
+      "median": 0.08082267783182595,
+      "rank": 0.03828442634139124
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 4,
+      "median": 0.18558782420004905,
+      "rank": 0.05302509262858544
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "HIGH",
+      "target": "tariff_12",
+      "support": 2,
+      "median": 0.40998918056931755,
+      "rank": 0.06833153009488625
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 14,
+      "median": -0.3789121649487466,
+      "rank": -0.2210320962201022
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 10,
+      "median": -0.07972701156624279,
+      "rank": -0.039863505783121395
+    },
+    {
+      "from_tariff": "tariff_1",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 32,
+      "median": -0.18630055850494714,
+      "rank": -0.1419432826704359
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 1,
+      "median": -0.8635379061371842,
+      "rank": -0.07850344601247129
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 11,
+      "median": -0.9434371926438658,
+      "rank": -0.49418138662297734
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "LOW",
+      "target": "tariff_12",
+      "support": 4,
+      "median": -1.0,
+      "rank": -0.2857142857142857
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 2,
+      "median": 1.9904472849666335,
+      "rank": 0.3317412141611056
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "LOW",
+      "target": "tariff_21",
+      "support": 2,
+      "median": 1.0,
+      "rank": 0.16666666666666666
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 13,
+      "median": 0.28177600738383823,
+      "rank": 0.1592646998256477
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 19,
+      "median": -0.9821217550413601,
+      "rank": -0.6434590808891669
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 8,
+      "median": 3.0,
+      "rank": 1.3333333333333333
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 12,
+      "median": -0.8210592953404757,
+      "rank": -0.44785052473116854
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 86,
+      "median": 0.4539311552552814,
+      "rank": 0.4066466599161896
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 30,
+      "median": 0.31122585143319137,
+      "rank": 0.23341938857489353
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 31,
+      "median": -0.2974126523453444,
+      "rank": -0.2248729810416019
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "MID",
+      "target": "tariff_21",
+      "support": 1,
+      "median": -0.2176759932432193,
+      "rank": -0.019788726658474483
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 60,
+      "median": 0.03122583496809228,
+      "rank": 0.026765001401221955
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 138,
+      "median": 0.21997523868700175,
+      "rank": 0.20511204688382595
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 3,
+      "median": 0.1673875083948959,
+      "rank": 0.038627886552668286
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 17,
+      "median": -0.5288250179753669,
+      "rank": -0.33296390020671246
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 134,
+      "median": -0.039404978379194155,
+      "rank": -0.036668521547305676
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "HIGH",
+      "target": "tariff_12",
+      "support": 91,
+      "median": -0.022662464159437623,
+      "rank": -0.020418655826820037
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 33,
+      "median": -0.39892606117359064,
+      "rank": -0.3061525585750812
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 77,
+      "median": -0.2964351525049169,
+      "rank": -0.262362146469869
+    },
+    {
+      "from_tariff": "tariff_10",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 324,
+      "median": -0.12702691845866892,
+      "rank": -0.12322371730721177
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 14,
+      "median": -0.9999475150952717,
+      "rank": -0.5833027171389085
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "LOW",
+      "target": "tariff_12",
+      "support": 20,
+      "median": -0.7502318860282228,
+      "rank": -0.5001545906854818
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 4,
+      "median": -0.7744058593249097,
+      "rank": -0.22125881694997418
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "LOW",
+      "target": "tariff_21",
+      "support": 1,
+      "median": 3.0,
+      "rank": 0.2727272727272727
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 10,
+      "median": -0.9396483530084521,
+      "rank": -0.46982417650422603
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 16,
+      "median": 1.9193591966527026,
+      "rank": 1.181144121017048
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 4,
+      "median": 3.0,
+      "rank": 0.8571428571428571
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 6,
+      "median": -0.41527331021833014,
+      "rank": -0.1557274913318738
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 29,
+      "median": 0.1961606270721723,
+      "rank": 0.1458630303869999
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 62,
+      "median": 0.15754840879396037,
+      "rank": 0.13566668535035478
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 7,
+      "median": -0.13563862332270582,
+      "rank": -0.05585119783876122
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 42,
+      "median": -7.772306510744897e-05,
+      "rank": -6.277632181755494e-05
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 103,
+      "median": 0.22388153241474384,
+      "rank": 0.20406900742228862
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 3,
+      "median": 0.24466715230716019,
+      "rank": 0.05646165053242158
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 5,
+      "median": -0.3796934197151862,
+      "rank": -0.1265644732383954
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 110,
+      "median": -0.08645491843138664,
+      "rank": -0.07925034189543775
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "HIGH",
+      "target": "tariff_12",
+      "support": 107,
+      "median": 0.12055639398036466,
+      "rank": 0.1102524286828976
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 20,
+      "median": -0.5337661288850617,
+      "rank": -0.35584408592337446
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 42,
+      "median": -0.37916987102566413,
+      "rank": -0.30625258813611334
+    },
+    {
+      "from_tariff": "tariff_11",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 213,
+      "median": -0.14135160010040415,
+      "rank": -0.13501296332460128
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 8,
+      "median": -1.0,
+      "rank": -0.4444444444444444
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 6,
+      "median": 1.3772887831603229,
+      "rank": 0.5164832936851211
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 3,
+      "median": -0.6862709469008682,
+      "rank": -0.15837021851558497
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 10,
+      "median": -1.0,
+      "rank": -0.5
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 6,
+      "median": 2.7519577448819907,
+      "rank": 1.0319841543307464
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 1,
+      "median": -1.0,
+      "rank": -0.09090909090909091
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 2,
+      "median": -0.6071872311956418,
+      "rank": -0.10119787186594029
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 22,
+      "median": 0.2449094953587262,
+      "rank": 0.16837527805912425
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 22,
+      "median": -0.5165440904103196,
+      "rank": -0.3551240621570947
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 9,
+      "median": -0.26949564765752576,
+      "rank": -0.12765583310093326
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 10,
+      "median": -0.31239252060883155,
+      "rank": -0.15619626030441577
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 78,
+      "median": 0.335333597172743,
+      "rank": 0.2972275065849313
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 1,
+      "median": 1.3624518944998116,
+      "rank": 0.12385926313634651
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 5,
+      "median": -0.7878158571698459,
+      "rank": -0.26260528572328196
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 85,
+      "median": 0.042001967693467535,
+      "rank": 0.03758070793626043
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 82,
+      "median": 0.02492292416782127,
+      "rank": 0.02221391067131896
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 9,
+      "median": -0.5296255773630884,
+      "rank": -0.25087527348777866
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 15,
+      "median": -0.20116072798917806,
+      "rank": -0.12069643679350683
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 168,
+      "median": -0.11556763924305091,
+      "rank": -0.10907507524063231
+    },
+    {
+      "from_tariff": "tariff_12",
+      "arpu_segment": "HIGH",
+      "target": "tariff_9",
+      "support": 1,
+      "median": -0.17920096686657694,
+      "rank": -0.01629099698787063
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 3,
+      "median": 1.199344992325818,
+      "rank": 0.276771921305958
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 2,
+      "median": 3.0,
+      "rank": 0.5
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 1,
+      "median": 1.5004813284665675,
+      "rank": 0.13640739349696068
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "LOW",
+      "target": "tariff_21",
+      "support": 2,
+      "median": -0.4898614323699172,
+      "rank": -0.08164357206165286
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 7,
+      "median": -0.2557807513577067,
+      "rank": -0.10532148585317336
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 20,
+      "median": 1.1809056455232212,
+      "rank": 0.787270430348814
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 8,
+      "median": 3.0,
+      "rank": 1.3333333333333333
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 41,
+      "median": -0.8218993179835106,
+      "rank": -0.660742588967136
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 28,
+      "median": 0.6403714222996268,
+      "rank": 0.47185262695761976
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 9,
+      "median": 0.487645451785895,
+      "rank": 0.23098995084595025
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 3,
+      "median": -0.8638843822047647,
+      "rank": -0.19935793435494573
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "MID",
+      "target": "tariff_21",
+      "support": 2,
+      "median": 0.9109967808030623,
+      "rank": 0.15183279680051037
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 73,
+      "median": 0.2232146713544052,
+      "rank": 0.19632133745628408
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 234,
+      "median": 0.4054727663629685,
+      "rank": 0.3888550300366173
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 28,
+      "median": 0.36422755356455516,
+      "rank": 0.26837819736335644
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 7,
+      "median": -0.2525050369601126,
+      "rank": -0.10397266227769343
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 9,
+      "median": -0.024250589424048563,
+      "rank": -0.011487121306128266
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 6,
+      "median": -0.48164667281623824,
+      "rank": -0.18061750230608933
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "HIGH",
+      "target": "tariff_12",
+      "support": 9,
+      "median": 0.014760450980284778,
+      "rank": 0.006991792569608579
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 22,
+      "median": -0.20711147295030968,
+      "rank": -0.1423891376533379
+    },
+    {
+      "from_tariff": "tariff_13",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 33,
+      "median": -0.07330873308733099,
+      "rank": -0.056260190508881924
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 2,
+      "median": 3.0,
+      "rank": 0.5
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 4,
+      "median": -0.8605357844767636,
+      "rank": -0.245867366993361
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 1,
+      "median": -1.0,
+      "rank": -0.09090909090909091
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "LOW",
+      "target": "tariff_12",
+      "support": 4,
+      "median": -0.9417007791983308,
+      "rank": -0.26905736548523734
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 3,
+      "median": 0.41446840056835743,
+      "rank": 0.09564655397731325
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "LOW",
+      "target": "tariff_21",
+      "support": 3,
+      "median": 1.8767957927142125,
+      "rank": 0.43310672139558754
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 6,
+      "median": 1.8212652024213607,
+      "rank": 0.6829744509080102
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 9,
+      "median": 3.0,
+      "rank": 1.4210526315789473
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 21,
+      "median": 1.58585313174946,
+      "rank": 1.0742876053786663
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 8,
+      "median": -0.5498245054908282,
+      "rank": -0.24436644688481252
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 17,
+      "median": -0.22461065801574553,
+      "rank": -0.14142152541732125
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 3,
+      "median": -1.0,
+      "rank": -0.23076923076923078
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 6,
+      "median": -1.0,
+      "rank": -0.375
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 9,
+      "median": -0.3530009752264903,
+      "rank": -0.1672109882651796
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "MID",
+      "target": "tariff_21",
+      "support": 1,
+      "median": -1.0,
+      "rank": -0.09090909090909091
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 25,
+      "median": -0.015776020448917683,
+      "rank": -0.011268586034941202
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 42,
+      "median": -0.16950121184759936,
+      "rank": -0.13690482495383025
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 7,
+      "median": 0.7287748298374777,
+      "rank": 0.3000837534624908
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 4,
+      "median": -0.6212610551087131,
+      "rank": -0.17750315860248944
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 11,
+      "median": -0.234254348696612,
+      "rank": -0.12270465884108248
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 4,
+      "median": -0.2310906351548933,
+      "rank": -0.06602589575854094
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "HIGH",
+      "target": "tariff_12",
+      "support": 2,
+      "median": -0.49118515983825795,
+      "rank": -0.08186419330637631
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 4,
+      "median": -0.41961112963114044,
+      "rank": -0.11988889418032583
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 9,
+      "median": -0.4005729369006945,
+      "rank": -0.18974507537401317
+    },
+    {
+      "from_tariff": "tariff_14",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 35,
+      "median": -0.10172068422754654,
+      "rank": -0.0791160877325362
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 4,
+      "median": 0.13334618950453653,
+      "rank": 0.038098911287010435
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 4,
+      "median": 3.0,
+      "rank": 0.8571428571428571
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 1,
+      "median": -1.0,
+      "rank": -0.09090909090909091
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 14,
+      "median": 1.951764127884485,
+      "rank": 1.138529074599283
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "LOW",
+      "target": "tariff_21",
+      "support": 8,
+      "median": 0.9127221184605859,
+      "rank": 0.4056542748713715
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 7,
+      "median": 0.47507437941450337,
+      "rank": 0.1956188621118543
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 21,
+      "median": 2.3541537507749535,
+      "rank": 1.5947493150410974
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 19,
+      "median": 2.2776754401501997,
+      "rank": 1.4922701159604757
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 54,
+      "median": -0.5658380877332895,
+      "rank": -0.477425886524963
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 180,
+      "median": 0.43958129881519203,
+      "rank": 0.4164454409828135
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 23,
+      "median": 0.3505432437356757,
+      "rank": 0.24431801836122852
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 4,
+      "median": 2.7830460277982,
+      "rank": 0.7951560079423428
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 348,
+      "median": -0.07413366115823583,
+      "rank": -0.07206288850018455
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "MID",
+      "target": "tariff_21",
+      "support": 8,
+      "median": 0.29944131300187793,
+      "rank": 0.13308502800083463
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 133,
+      "median": 0.376570567003244,
+      "rank": 0.35023696091910106
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 429,
+      "median": 0.46101469470483925,
+      "rank": 0.4505132210213577
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 133,
+      "median": 0.2923933052760306,
+      "rank": 0.27194622099099347
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 3,
+      "median": 0.3063275329602002,
+      "rank": 0.0706909691446616
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 9,
+      "median": 0.22040293367252062,
+      "rank": 0.10440138963435186
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 5,
+      "median": -0.04579899740385296,
+      "rank": -0.015266332467950986
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "HIGH",
+      "target": "tariff_12",
+      "support": 3,
+      "median": 0.5426294179212623,
+      "rank": 0.12522217336644514
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 11,
+      "median": -0.2568702193297553,
+      "rank": -0.13455106726796706
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 16,
+      "median": -0.11232711127533823,
+      "rank": -0.06912437616943892
+    },
+    {
+      "from_tariff": "tariff_15",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 30,
+      "median": -0.05945361908797392,
+      "rank": -0.04459021431598044
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 27,
+      "median": -0.20177826396662257,
+      "rank": -0.14724359802969755
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 2,
+      "median": 1.0,
+      "rank": 0.16666666666666666
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 4,
+      "median": 3.0,
+      "rank": 0.8571428571428571
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 9,
+      "median": 2.63419460831902,
+      "rank": 1.2477763934142725
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "LOW",
+      "target": "tariff_21",
+      "support": 29,
+      "median": 0.8494743777033025,
+      "rank": 0.6316604347024557
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 13,
+      "median": 3.0,
+      "rank": 1.6956521739130435
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 25,
+      "median": 2.9850168684262752,
+      "rank": 2.132154906018768
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 108,
+      "median": 1.5929197088285305,
+      "rank": 1.4579265131650958
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 48,
+      "median": -0.5098457948751132,
+      "rank": -0.4219413474828523
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 4,
+      "median": 1.2507537605878343,
+      "rank": 0.35735821731080974
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 9,
+      "median": 0.6270490049218918,
+      "rank": 0.2970232128577382
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 1,
+      "median": -0.504769759723354,
+      "rank": -0.045888159974850365
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 43,
+      "median": 0.03763289114686241,
+      "rank": 0.030532345647454412
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "MID",
+      "target": "tariff_21",
+      "support": 7,
+      "median": 0.02356453378445611,
+      "rank": 0.00970304332301134
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 15,
+      "median": 0.4089400094851183,
+      "rank": 0.24536400569107097
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 44,
+      "median": 0.7980352610657878,
+      "rank": 0.6502509534610122
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 22,
+      "median": 0.9182846216787292,
+      "rank": 0.6313206774041263
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 1,
+      "median": -0.2660151259317278,
+      "rank": -0.02418319326652071
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 3,
+      "median": -0.0330787221572032,
+      "rank": -0.007633551267046893
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 4,
+      "median": -0.420576132447018,
+      "rank": -0.12016460927057657
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 3,
+      "median": -0.07775929415976168,
+      "rank": -0.017944452498406545
+    },
+    {
+      "from_tariff": "tariff_16",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 4,
+      "median": 0.06632789892127788,
+      "rank": 0.018950828263222252
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 1,
+      "median": -0.2749888542131075,
+      "rank": -0.024998986746646135
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "LOW",
+      "target": "tariff_12",
+      "support": 1,
+      "median": 3.0,
+      "rank": 0.2727272727272727
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 3,
+      "median": -0.5058467233111803,
+      "rank": -0.116733859225657
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 4,
+      "median": 0.23782682480019202,
+      "rank": 0.06795052137148343
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 15,
+      "median": 0.6227763549525853,
+      "rank": 0.37366581297155116
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 4,
+      "median": 3.0,
+      "rank": 0.8571428571428571
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 23,
+      "median": -0.5687317239983529,
+      "rank": -0.3963887773321854
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 16,
+      "median": 0.5202525981985514,
+      "rank": 0.32015544504526244
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 23,
+      "median": 0.16070932829065177,
+      "rank": 0.11200953183893912
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 4,
+      "median": 0.43560049605831574,
+      "rank": 0.1244572845880902
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 35,
+      "median": -0.2566871915763733,
+      "rank": -0.19964559344829036
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 45,
+      "median": 0.16740790593836863,
+      "rank": 0.13697010485866526
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 127,
+      "median": 0.3364115929049931,
+      "rank": 0.31185600218200094
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 5,
+      "median": 2.1187189482534587,
+      "rank": 0.7062396494178196
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 3,
+      "median": -0.9454770147236227,
+      "rank": -0.2181870033977591
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 14,
+      "median": 0.24065681145372664,
+      "rank": 0.1403831400146739
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 11,
+      "median": 0.2218143672619719,
+      "rank": 0.11618847808960434
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "HIGH",
+      "target": "tariff_12",
+      "support": 6,
+      "median": -0.1665998315084955,
+      "rank": -0.06247493681568581
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 16,
+      "median": -0.3307773059076275,
+      "rank": -0.2035552651739246
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 30,
+      "median": -0.16499099874928363,
+      "rank": -0.12374324906196273
+    },
+    {
+      "from_tariff": "tariff_17",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 114,
+      "median": -0.04599114375193902,
+      "rank": -0.042282180546137485
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 4,
+      "median": -0.40134815485521097,
+      "rank": -0.11467090138720312
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 9,
+      "median": -1.0,
+      "rank": -0.47368421052631576
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 2,
+      "median": 3.0,
+      "rank": 0.5
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "LOW",
+      "target": "tariff_12",
+      "support": 1,
+      "median": 3.0,
+      "rank": 0.2727272727272727
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 6,
+      "median": 1.3972049068302277,
+      "rank": 0.5239518400613354
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 3,
+      "median": 3.0,
+      "rank": 0.6923076923076923
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 14,
+      "median": 3.0,
+      "rank": 1.75
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 13,
+      "median": 3.0,
+      "rank": 1.6956521739130435
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 5,
+      "median": -0.6408433029365013,
+      "rank": -0.2136144343121671
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 27,
+      "median": 0.496771896797239,
+      "rank": 0.3625092219871744
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 5,
+      "median": 0.5193532536427807,
+      "rank": 0.17311775121426023
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 6,
+      "median": 0.5603910082623078,
+      "rank": 0.21014662809836543
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 25,
+      "median": 0.04314603828481722,
+      "rank": 0.030818598774869446
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 15,
+      "median": 0.3497969445843718,
+      "rank": 0.2098781667506231
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 50,
+      "median": 0.30532841237796104,
+      "rank": 0.25444034364830087
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 3,
+      "median": 0.908719731971048,
+      "rank": 0.20970455353178033
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 8,
+      "median": -0.8073644521300429,
+      "rank": -0.3588286453911302
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 67,
+      "median": 0.0073634834110434255,
+      "rank": 0.0064071868641546684
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 22,
+      "median": 0.14291085827085004,
+      "rank": 0.0982512150612094
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "HIGH",
+      "target": "tariff_12",
+      "support": 26,
+      "median": -0.026749480926335722,
+      "rank": -0.019319069557909133
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 23,
+      "median": -0.43824652860054025,
+      "rank": -0.3054445502367402
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 49,
+      "median": -0.19897513446755055,
+      "rank": -0.16525053540525386
+    },
+    {
+      "from_tariff": "tariff_18",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 127,
+      "median": -0.04877322331828804,
+      "rank": -0.045213134024982345
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 8,
+      "median": -0.5875657850269558,
+      "rank": -0.26114034890086923
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 3,
+      "median": 0.5465113451202606,
+      "rank": 0.12611800272006013
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 3,
+      "median": -0.9967208587898243,
+      "rank": -0.23001250587457486
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 8,
+      "median": 2.6756897797521875,
+      "rank": 1.189195457667639
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "LOW",
+      "target": "tariff_21",
+      "support": 1,
+      "median": 3.0,
+      "rank": 0.2727272727272727
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 3,
+      "median": 3.0,
+      "rank": 0.6923076923076923
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 11,
+      "median": -0.4187275937717374,
+      "rank": -0.2193335014994815
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 12,
+      "median": 1.2382007320362165,
+      "rank": 0.6753822174742998
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 3,
+      "median": -0.8806791697235249,
+      "rank": -0.20323365455158268
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 13,
+      "median": 0.11728685821950058,
+      "rank": 0.06629257203710902
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 4,
+      "median": -0.3643545971095582,
+      "rank": -0.10410131345987376
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 12,
+      "median": 0.07396956076904193,
+      "rank": 0.040347033146750144
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 16,
+      "median": -0.09108393178800217,
+      "rank": -0.056051650331078264
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 21,
+      "median": 0.6888541097967849,
+      "rank": 0.46664310663653163
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 7,
+      "median": 0.5907635167567653,
+      "rank": 0.24325556572337395
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 3,
+      "median": -0.30389811025419444,
+      "rank": -0.07013033313558334
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 2,
+      "median": -0.0033573177347406835,
+      "rank": -0.0005595529557901139
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 5,
+      "median": 0.17575259497648466,
+      "rank": 0.058584198325494885
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "HIGH",
+      "target": "tariff_12",
+      "support": 6,
+      "median": -0.27416567174578144,
+      "rank": -0.10281212690466804
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 5,
+      "median": -0.45449013350013,
+      "rank": -0.15149671116670999
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 5,
+      "median": -0.22052314711986676,
+      "rank": -0.07350771570662225
+    },
+    {
+      "from_tariff": "tariff_19",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 35,
+      "median": -0.25178992169428027,
+      "rank": -0.19583660576221798
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 12,
+      "median": -0.2207554783425117,
+      "rank": -0.12041207909591546
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 6,
+      "median": 3.0,
+      "rank": 1.125
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 15,
+      "median": 3.0,
+      "rank": 1.7999999999999998
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "LOW",
+      "target": "tariff_21",
+      "support": 13,
+      "median": 0.4959416095136222,
+      "rank": 0.28031482276856906
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 4,
+      "median": 0.602697516526191,
+      "rank": 0.17219929043605456
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 17,
+      "median": 0.501139357291331,
+      "rank": 0.31553218792417137
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 14,
+      "median": 1.3005722857893471,
+      "rank": 0.7586671667104525
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 20,
+      "median": -0.6237915911651819,
+      "rank": -0.4158610607767879
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 30,
+      "median": 0.276872459179462,
+      "rank": 0.2076543443845965
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 4,
+      "median": 0.172928173338601,
+      "rank": 0.049408049525314565
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 5,
+      "median": 0.39457872875251,
+      "rank": 0.1315262429175033
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 58,
+      "median": -0.024378647199133074,
+      "rank": -0.020793552022789975
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "MID",
+      "target": "tariff_21",
+      "support": 3,
+      "median": -0.5068458524666133,
+      "rank": -0.11696442749229538
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 23,
+      "median": 0.4384120466171362,
+      "rank": 0.3055599112786101
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 113,
+      "median": 0.2877625083736026,
+      "rank": 0.26436718248956986
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 42,
+      "median": 0.22034521923981587,
+      "rank": 0.17797113861677435
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 1,
+      "median": -0.6968949562158235,
+      "rank": -0.06335408692871124
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 2,
+      "median": 0.04878511203887481,
+      "rank": 0.008130852006479134
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 1,
+      "median": -0.21382639043588025,
+      "rank": -0.019438762766898206
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 3,
+      "median": -0.23444144706616876,
+      "rank": -0.0541018723998851
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 5,
+      "median": 0.13020854089690226,
+      "rank": 0.04340284696563408
+    },
+    {
+      "from_tariff": "tariff_2",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 16,
+      "median": -0.05091548162480125,
+      "rank": -0.031332604076800774
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 4,
+      "median": 0.2995211921170745,
+      "rank": 0.08557748346202128
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 2,
+      "median": 1.8936938818124869,
+      "rank": 0.3156156469687478
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 1,
+      "median": -1.0,
+      "rank": -0.09090909090909091
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "LOW",
+      "target": "tariff_12",
+      "support": 1,
+      "median": -0.8107022336493652,
+      "rank": -0.0737002030590332
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 5,
+      "median": 2.583456048606844,
+      "rank": 0.8611520162022812
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 2,
+      "median": -0.9852047722479302,
+      "rank": -0.16420079537465504
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 4,
+      "median": 2.282490102742954,
+      "rank": 0.6521400293551296
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 2,
+      "median": 1.0183358624178047,
+      "rank": 0.16972264373630078
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 9,
+      "median": -0.7074929662708149,
+      "rank": -0.33512824718091233
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 5,
+      "median": 0.5325024207364004,
+      "rank": 0.17750080691213346
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 2,
+      "median": 0.4323352975770276,
+      "rank": 0.0720558829295046
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 3,
+      "median": 0.2869145781587932,
+      "rank": 0.06621105649818304
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 8,
+      "median": -0.0767453534009685,
+      "rank": -0.034109045955985996
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 8,
+      "median": -0.051519742901331655,
+      "rank": -0.022897663511702956
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 31,
+      "median": 0.1371430509538072,
+      "rank": 0.10369352633092739
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 1,
+      "median": 1.955706238097894,
+      "rank": 0.17779147619071764
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 11,
+      "median": -0.8426272066458982,
+      "rank": -0.4413761558621372
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 17,
+      "median": 0.12560013170140083,
+      "rank": 0.0790815644045857
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 8,
+      "median": 0.19884455222742148,
+      "rank": 0.08837535654552066
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "HIGH",
+      "target": "tariff_12",
+      "support": 9,
+      "median": 0.021645598678900146,
+      "rank": 0.01025317832158428
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 17,
+      "median": -0.40669427308650696,
+      "rank": -0.25606676453594884
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 29,
+      "median": -0.2468331690085469,
+      "rank": -0.18354261285250925
+    },
+    {
+      "from_tariff": "tariff_20",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 78,
+      "median": -0.08570907104392195,
+      "rank": -0.0759694038798399
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 8,
+      "median": -0.9773022184584621,
+      "rank": -0.43435654153709424
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 5,
+      "median": 3.0,
+      "rank": 1.0
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 2,
+      "median": 3.0,
+      "rank": 0.5
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "LOW",
+      "target": "tariff_12",
+      "support": 5,
+      "median": -1.0,
+      "rank": -0.3333333333333333
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 6,
+      "median": 1.1281178188884804,
+      "rank": 0.4230441820831802
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "LOW",
+      "target": "tariff_21",
+      "support": 2,
+      "median": -1.0,
+      "rank": -0.16666666666666666
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 15,
+      "median": -0.7415231946437111,
+      "rank": -0.44491391678622666
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 27,
+      "median": -0.5190366730078209,
+      "rank": -0.3787564911138152
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 31,
+      "median": 1.0336782019265072,
+      "rank": 0.7815615673102859
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 21,
+      "median": -0.8518371715089778,
+      "rank": -0.5770509871512429
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 31,
+      "median": 0.4344814086688624,
+      "rank": 0.32851033338377406
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 29,
+      "median": 0.5957502529283172,
+      "rank": 0.44299377781849225
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 8,
+      "median": 0.25423200911126276,
+      "rank": 0.1129920040494501
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 32,
+      "median": 0.11996581510846072,
+      "rank": 0.09140252579692244
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "MID",
+      "target": "tariff_21",
+      "support": 8,
+      "median": -0.14516086091605823,
+      "rank": -0.06451593818491477
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 47,
+      "median": -0.17500105095407525,
+      "rank": -0.14429911219020242
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 241,
+      "median": 0.4526683697259297,
+      "rank": 0.43463377332250624
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 30,
+      "median": 0.26789073285922793,
+      "rank": 0.20091804964442095
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 3,
+      "median": -0.865104296582689,
+      "rank": -0.1996394530575436
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 19,
+      "median": -0.19904183160736366,
+      "rank": -0.1304067172599969
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 11,
+      "median": -0.2809015696035354,
+      "rank": -0.1471389174113757
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "HIGH",
+      "target": "tariff_12",
+      "support": 10,
+      "median": 0.12550824588524134,
+      "rank": 0.06275412294262067
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 5,
+      "median": -0.26896602608284104,
+      "rank": -0.08965534202761367
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 6,
+      "median": -0.30672083468012823,
+      "rank": -0.11502031300504809
+    },
+    {
+      "from_tariff": "tariff_3",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 83,
+      "median": -0.01336798308276943,
+      "rank": -0.01193056554698777
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 3,
+      "median": 1.0237568165865771,
+      "rank": 0.23625157305844088
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 17,
+      "median": 0.6276798613117596,
+      "rank": 0.39520583860370045
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 13,
+      "median": -0.9706662862034527,
+      "rank": -0.548637466114995
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "LOW",
+      "target": "tariff_12",
+      "support": 9,
+      "median": -0.28983634797588276,
+      "rank": -0.13729090167278657
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 8,
+      "median": 1.4839072849697827,
+      "rank": 0.659514348875459
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "LOW",
+      "target": "tariff_21",
+      "support": 3,
+      "median": -0.3859039085225183,
+      "rank": -0.08905474812058116
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 22,
+      "median": -0.5980690801229719,
+      "rank": -0.4111724925845432
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 17,
+      "median": 3.0,
+      "rank": 1.8888888888888888
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 37,
+      "median": -0.7767900074112906,
+      "rank": -0.6115155377493139
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 58,
+      "median": 0.186346215639558,
+      "rank": 0.15894236039844653
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 41,
+      "median": 0.2161822550030308,
+      "rank": 0.17379357755145614
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 13,
+      "median": -0.56187715333605,
+      "rank": -0.31758273884211524
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 100,
+      "median": -0.18309857689558334,
+      "rank": -0.1664532517232576
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "MID",
+      "target": "tariff_21",
+      "support": 2,
+      "median": 0.6445437124936595,
+      "rank": 0.10742395208227658
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 408,
+      "median": 0.2921078866039747,
+      "rank": 0.2851196596517265
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 11,
+      "median": 1.158869504018965,
+      "rank": 0.6070268830575531
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 21,
+      "median": -0.6396144496574253,
+      "rank": -0.4332872078324494
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 45,
+      "median": -0.1448206955633098,
+      "rank": -0.11848966000634438
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 32,
+      "median": -0.2079277564949783,
+      "rank": -0.15842114780569774
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "HIGH",
+      "target": "tariff_12",
+      "support": 19,
+      "median": 0.05672080481147401,
+      "rank": 0.0371619066006209
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 31,
+      "median": -0.455178465823461,
+      "rank": -0.3441593278177388
+    },
+    {
+      "from_tariff": "tariff_4",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 340,
+      "median": -0.08254420087301767,
+      "rank": -0.0801857951337886
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 10,
+      "median": -0.7905438092112446,
+      "rank": -0.3952719046056223
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 32,
+      "median": -0.952237251248345,
+      "rank": -0.7255140961892153
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 9,
+      "median": -1.0,
+      "rank": -0.47368421052631576
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "LOW",
+      "target": "tariff_12",
+      "support": 8,
+      "median": -1.0,
+      "rank": -0.4444444444444444
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 36,
+      "median": 1.4654374803834578,
+      "rank": 1.1468641150827061
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "LOW",
+      "target": "tariff_21",
+      "support": 1,
+      "median": -1.0,
+      "rank": -0.09090909090909091
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 20,
+      "median": 0.44424980613538056,
+      "rank": 0.296166537423587
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 6,
+      "median": 2.89072044299823,
+      "rank": 1.0840201661243363
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 11,
+      "median": -0.9532350234359951,
+      "rank": -0.4993135837045689
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 18,
+      "median": -0.8695796017596817,
+      "rank": -0.5590154582740812
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 36,
+      "median": -0.5828544897974892,
+      "rank": -0.45614699201542636
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 15,
+      "median": -0.8655695492372204,
+      "rank": -0.5193417295423323
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 17,
+      "median": -0.6832600092408445,
+      "rank": -0.4302007465590503
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 43,
+      "median": -0.20430949382169716,
+      "rank": -0.16576053272326374
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "MID",
+      "target": "tariff_21",
+      "support": 4,
+      "median": -1.0,
+      "rank": -0.2857142857142857
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 32,
+      "median": 0.021205137373105587,
+      "rank": 0.01615629514141378
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 21,
+      "median": -0.21515628772746231,
+      "rank": -0.1457510336218293
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 2,
+      "median": -0.4008897252295553,
+      "rank": -0.06681495420492588
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 9,
+      "median": -0.827695199350234,
+      "rank": -0.39206614706063714
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 32,
+      "median": 0.019398647524172308,
+      "rank": 0.014779921923178901
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 18,
+      "median": -0.002183138234672588,
+      "rank": -0.0014034460080038066
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "HIGH",
+      "target": "tariff_12",
+      "support": 10,
+      "median": -0.9967709365416372,
+      "rank": -0.4983854682708186
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 6,
+      "median": -0.4843361187510709,
+      "rank": -0.1816260445316516
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 13,
+      "median": -0.5913218726558098,
+      "rank": -0.33422540628371855
+    },
+    {
+      "from_tariff": "tariff_5",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 13,
+      "median": -0.09933708753735182,
+      "rank": -0.05614704947763363
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 13,
+      "median": 0.63785594639866,
+      "rank": 0.3605272740514165
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 21,
+      "median": -1.0,
+      "rank": -0.6774193548387096
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 7,
+      "median": -0.599053456243976,
+      "rank": -0.24666907021810774
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "LOW",
+      "target": "tariff_12",
+      "support": 3,
+      "median": 3.0,
+      "rank": 0.6923076923076923
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 37,
+      "median": 2.317936091634106,
+      "rank": 1.8247581997970623
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 23,
+      "median": 2.4990538755400054,
+      "rank": 1.7417648223460644
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 10,
+      "median": 0.5718274188656355,
+      "rank": 0.28591370943281774
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 18,
+      "median": -0.29067852768577834,
+      "rank": -0.18686476779800038
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 10,
+      "median": -0.8914417838958313,
+      "rank": -0.44572089194791564
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 25,
+      "median": -0.6480456128242933,
+      "rank": -0.4628897234459238
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 10,
+      "median": 0.6127807266042407,
+      "rank": 0.3063903633021203
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 2,
+      "median": -0.1984072126220886,
+      "rank": -0.0330678687703481
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 28,
+      "median": -0.4757494561192852,
+      "rank": -0.35055223082473647
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "MID",
+      "target": "tariff_21",
+      "support": 1,
+      "median": -0.7999990988920878,
+      "rank": -0.07272719080837162
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 13,
+      "median": -0.1481965030847605,
+      "rank": -0.08376324087399506
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 9,
+      "median": 0.4534802317936324,
+      "rank": 0.21480642558645743
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 3,
+      "median": -0.9855069728821876,
+      "rank": -0.22742468604973562
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 4,
+      "median": -0.9839512851313637,
+      "rank": -0.28112893860896104
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 9,
+      "median": -0.5687536635984854,
+      "rank": -0.2694096301255984
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 11,
+      "median": 0.2285392664586916,
+      "rank": 0.11971104433550513
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "HIGH",
+      "target": "tariff_12",
+      "support": 8,
+      "median": -1.0,
+      "rank": -0.4444444444444444
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 6,
+      "median": -0.5720024977992274,
+      "rank": -0.21450093667471026
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 10,
+      "median": -0.5679189336613948,
+      "rank": -0.2839594668306974
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 3,
+      "median": -0.7397233905002651,
+      "rank": -0.1707053978077535
+    },
+    {
+      "from_tariff": "tariff_6",
+      "arpu_segment": "HIGH",
+      "target": "tariff_9",
+      "support": 1,
+      "median": -0.1551881942168838,
+      "rank": -0.014108017656080345
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 4,
+      "median": -0.23290714773056165,
+      "rank": -0.06654489935158904
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 16,
+      "median": -0.6214685872963721,
+      "rank": -0.38244220756699826
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 3,
+      "median": -0.9946151190887125,
+      "rank": -0.22952656594354903
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "LOW",
+      "target": "tariff_12",
+      "support": 4,
+      "median": 3.0,
+      "rank": 0.8571428571428571
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 9,
+      "median": 0.22084598118232668,
+      "rank": 0.10461125424426
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "LOW",
+      "target": "tariff_21",
+      "support": 1,
+      "median": -1.0,
+      "rank": -0.09090909090909091
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 10,
+      "median": -0.703213953364749,
+      "rank": -0.3516069766823745
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 3,
+      "median": -1.0,
+      "rank": -0.23076923076923078
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 20,
+      "median": 2.818107612637326,
+      "rank": 1.878738408424884
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 14,
+      "median": -0.6919621190578561,
+      "rank": -0.4036445694504161
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 31,
+      "median": -0.5195616644630527,
+      "rank": -0.39283930727694233
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 6,
+      "median": -0.33221349645173237,
+      "rank": -0.12458006116939964
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 2,
+      "median": 0.683860168655849,
+      "rank": 0.11397669477597483
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 18,
+      "median": -0.3904102410389217,
+      "rank": -0.25097801209644965
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "MID",
+      "target": "tariff_21",
+      "support": 2,
+      "median": -0.905699424637151,
+      "rank": -0.15094990410619183
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 15,
+      "median": 0.29702640717431117,
+      "rank": 0.1782158443045867
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 13,
+      "median": -0.4744198215640616,
+      "rank": -0.26815033392751303
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 3,
+      "median": -0.7813723602285128,
+      "rank": -0.18031669851427218
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 6,
+      "median": -0.9898111801631158,
+      "rank": -0.3711791925611684
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 26,
+      "median": -0.04637261849083529,
+      "rank": -0.033491335576714375
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 8,
+      "median": -0.12179853882405856,
+      "rank": -0.0541326839218038
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "HIGH",
+      "target": "tariff_12",
+      "support": 6,
+      "median": 0.0907799885240761,
+      "rank": 0.034042495696528535
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 5,
+      "median": -0.5673058787392156,
+      "rank": -0.18910195957973852
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 15,
+      "median": -0.5519509847475196,
+      "rank": -0.33117059084851175
+    },
+    {
+      "from_tariff": "tariff_7",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 20,
+      "median": -0.4652571270461495,
+      "rank": -0.3101714180307663
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 7,
+      "median": -0.08558553714119788,
+      "rank": -0.035241103528728536
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 30,
+      "median": -0.6089073063624721,
+      "rank": -0.4566804797718541
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 16,
+      "median": 0.2735356533989103,
+      "rank": 0.16832963286086788
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "LOW",
+      "target": "tariff_12",
+      "support": 10,
+      "median": -0.9999611454326456,
+      "rank": -0.4999805727163228
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 15,
+      "median": 2.0648373434261513,
+      "rank": 1.2389024060556908
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "LOW",
+      "target": "tariff_21",
+      "support": 6,
+      "median": 1.3436963696369637,
+      "rank": 0.5038861386138613
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 20,
+      "median": -0.5641983036397571,
+      "rank": -0.3761322024265047
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "LOW",
+      "target": "tariff_9",
+      "support": 26,
+      "median": 3.0,
+      "rank": 2.1666666666666665
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 63,
+      "median": -0.7478145971104884,
+      "rank": -0.6453742413419283
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 182,
+      "median": 0.3176484304182733,
+      "rank": 0.3011042413339882
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 99,
+      "median": 0.03215425838792818,
+      "rank": 0.029204326425732934
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 55,
+      "median": -0.415205879667671,
+      "rank": -0.3513280520264908
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 164,
+      "median": -0.19269967059894744,
+      "rank": -0.18162497688636425
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "MID",
+      "target": "tariff_21",
+      "support": 10,
+      "median": -0.9486024456123092,
+      "rank": -0.4743012228061546
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 178,
+      "median": -0.13921704721844858,
+      "rank": -0.1318118851323609
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "MID",
+      "target": "tariff_9",
+      "support": 19,
+      "median": 0.19478710339644767,
+      "rank": 0.12761913670801744
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 49,
+      "median": -0.7492186370171245,
+      "rank": -0.6222324273532052
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 283,
+      "median": 0.0013802609608408734,
+      "rank": 0.001333153078218318
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 133,
+      "median": -0.04708462383458323,
+      "rank": -0.04379199279719979
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "HIGH",
+      "target": "tariff_12",
+      "support": 113,
+      "median": -0.06565483503104363,
+      "rank": -0.06031704356510513
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 113,
+      "median": -0.4958064041667748,
+      "rank": -0.45549694041337846
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "HIGH",
+      "target": "tariff_21",
+      "support": 1,
+      "median": -0.20954718697554786,
+      "rank": -0.019049744270504352
+    },
+    {
+      "from_tariff": "tariff_8",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 204,
+      "median": -0.16815070729963882,
+      "rank": -0.1602931976127398
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "LOW",
+      "target": "tariff_1",
+      "support": 44,
+      "median": -0.2869558297648286,
+      "rank": -0.23381586128986032
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "LOW",
+      "target": "tariff_10",
+      "support": 3,
+      "median": 0.19131444911089268,
+      "rank": 0.04414948825635985
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "LOW",
+      "target": "tariff_11",
+      "support": 4,
+      "median": 1.6951757685171254,
+      "rank": 0.4843359338620358
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "LOW",
+      "target": "tariff_12",
+      "support": 2,
+      "median": -0.9932061289389997,
+      "rank": -0.1655343548231666
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "LOW",
+      "target": "tariff_13",
+      "support": 18,
+      "median": 1.7062106598831472,
+      "rank": 1.0968497099248804
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "LOW",
+      "target": "tariff_4",
+      "support": 12,
+      "median": 0.6302164132197283,
+      "rank": 0.3437544072107609
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "LOW",
+      "target": "tariff_8",
+      "support": 37,
+      "median": 0.639485106129972,
+      "rank": 0.5034244452512546
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "MID",
+      "target": "tariff_1",
+      "support": 44,
+      "median": -0.6377841128872763,
+      "rank": -0.519675943834077
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "MID",
+      "target": "tariff_10",
+      "support": 11,
+      "median": 0.519380604258123,
+      "rank": 0.2720565069923502
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "MID",
+      "target": "tariff_11",
+      "support": 11,
+      "median": -0.17194305109182106,
+      "rank": -0.09006540771476342
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "MID",
+      "target": "tariff_12",
+      "support": 10,
+      "median": -0.6115135456674168,
+      "rank": -0.3057567728337084
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "MID",
+      "target": "tariff_13",
+      "support": 49,
+      "median": -0.013221069231094118,
+      "rank": -0.01098021003938325
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "MID",
+      "target": "tariff_4",
+      "support": 37,
+      "median": 0.3759688101836631,
+      "rank": 0.29597544631479866
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "MID",
+      "target": "tariff_8",
+      "support": 71,
+      "median": 0.1432388808673477,
+      "rank": 0.12555506841458874
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "HIGH",
+      "target": "tariff_1",
+      "support": 4,
+      "median": -0.7640820439971427,
+      "rank": -0.21830915542775506
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "HIGH",
+      "target": "tariff_10",
+      "support": 4,
+      "median": -0.7613208558542285,
+      "rank": -0.21752024452977956
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "HIGH",
+      "target": "tariff_11",
+      "support": 7,
+      "median": 0.00999417630349786,
+      "rank": 0.004115249066146177
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "HIGH",
+      "target": "tariff_13",
+      "support": 2,
+      "median": -0.6912950643470257,
+      "rank": -0.11521584405783761
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "HIGH",
+      "target": "tariff_4",
+      "support": 2,
+      "median": -0.12852862791015807,
+      "rank": -0.021421437985026343
+    },
+    {
+      "from_tariff": "tariff_9",
+      "arpu_segment": "HIGH",
+      "target": "tariff_8",
+      "support": 12,
+      "median": -0.11034711968558547,
+      "rank": -0.060189338010319345
+    }
+  ]
+}
