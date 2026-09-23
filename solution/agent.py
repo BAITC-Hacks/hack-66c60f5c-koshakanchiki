@@ -128,7 +128,7 @@ class Agent:
                     break
                 if step < 8:
                     if step >= len(keys):
-                        break
+                        continue
                     key = keys[step]
                 else:
                     choices = []
