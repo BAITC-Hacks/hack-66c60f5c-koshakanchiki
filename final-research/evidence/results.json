@@ -1,0 +1,480 @@
+{
+  "checked_on": "2026-09-23",
+  "command": "python final-research/evidence/verify.py",
+  "versions": {
+    "python": "3.12.13",
+    "numpy": "2.5.3",
+    "pandas": "3.0.6"
+  },
+  "elapsed_seconds": 10.665,
+  "inputs_unchanged": true,
+  "official_manifest_matches": {
+    "case-files/PARTICIPANT_GUIDE.md": true,
+    "case-files/PARTICIPANT_GUIDE.pdf": true,
+    "case-files/agent_template.py": true,
+    "case-files/customer_profile.csv": true,
+    "case-files/environment.py": true,
+    "case-files/feature_dictionary.csv": true,
+    "case-files/local_eval.py": true,
+    "case-files/make_submission.py": true,
+    "case-files/mock_environment.py": true,
+    "case-files/scoring_core.py": true,
+    "case-files/tariff_dictionary.csv": true,
+    "case-files/data/arpu_monthly.csv": true,
+    "case-files/data/change_tariff.csv": true,
+    "case-files/data/dict_tariff.csv": true,
+    "case-files/data/traffic.csv": true,
+    "event-docs/Активация OpenAI и NVIDIA.pdf": true,
+    "event-docs/Инструкция для участников HackAlem AI.pdf": true,
+    "event-docs/Инструкция для участников_Онлайн-курс Arizona State University.pdf": true,
+    "event-docs/Инструкция по кибербезопасности.pdf": true,
+    "event-docs/Инструкция по подготовке оборудования.pdf": true,
+    "event-docs/Правила зачета участия.pdf": true
+  },
+  "preserved_experiments_match_originals": true,
+  "source_sha256": {
+    "final-research/evidence/expected.json": "e2daf3bf84637132c4c7bdb9364926aea44af5175b6ec8e2779bb9dad105c015",
+    "final-research/evidence/experiments/README.md": "1c61f2a085bb2c03ca9104f55442f3d80bb5e09361a28fa46a0dbc5482c65506",
+    "final-research/evidence/experiments/exploration_toy.py": "89f8c0c6725ecdd7e467e10d66bfc2c2e6d4ee2b38375fa4d6be56f07229faf6",
+    "final-research/evidence/experiments/portfolio_toy.py": "13a4f4655bcc3eaf6c82b42680539cdf4edc80f8fab1a723e9addccf5be88d5e",
+    "final-research/evidence/experiments/priors_audit.py": "e07e769dcc4f630fcb6975ec0e66a4d7a947d0be177139ccbc919e3b0611a372",
+    "final-research/evidence/experiments/research_data_audit.py": "769322647baabff993705182e035f377b58d3396905e2ac83d7c26b2cc45ef1c",
+    "final-research/evidence/experiments/research_mechanics_checks.py": "503cd35976f411b0d6f902dc3dbb495070ecb75b40b3d37ecd3b88cb5e3fd5fe",
+    "project-context/CASE.md": "7ce013f8478561577beeec890913ec12fe5c44a2d359e2243734727203f3ba4e",
+    "project-context/DELIVERY.md": "c99687cdc737cfcdab0be5192d8873d64465d0f320628213ca155f253ba5575a",
+    "project-context/README.md": "362395003d2c74c4ce3ecc24ab589f6b47d214dc16a80972c50d257c9da84a31",
+    "project-context/RULES.md": "d33fe5ade22d736a32311400e9a74fd16da1b0b7597605acb57049badaa04f15",
+    "project-context/SHA256SUMS.txt": "2e20ab5ed7687a239fa6d39081f9e2b30b881e36dbdfc394eb3cc80b2018fdc4",
+    "project-context/case-files/PARTICIPANT_GUIDE.md": "996b12258f2fba2b144a1eca8fb8b10ac34d23dc4c9218193e330dbf8b9306ab",
+    "project-context/case-files/PARTICIPANT_GUIDE.pdf": "b261a5df8e2555bce5f3ac1545a4daf8a8e5a308c3609bf7c04e7904b4d37e4a",
+    "project-context/case-files/README.md": "920941ea62262f84464709c8cb436fc96a5a79bea18222223281c82de21b5630",
+    "project-context/case-files/agent_template.py": "4eb369b732d4756bb7861c0dccab8af09d5fe17cde0fa629981d3eea5b5eb10d",
+    "project-context/case-files/customer_profile.csv": "a85e9badf4cb51b1ba8c43a868498b6fa8075509f3cd8e19ef72e1c25a6dc815",
+    "project-context/case-files/data/arpu_monthly.csv": "83d96b61c38a8bf7cdf5f07bc4f17f7f2f39885559c496fc28c266cef8ad3c4a",
+    "project-context/case-files/data/change_tariff.csv": "c52d7dad11fccc7425afe6d36a44a1fa03c8cc148be2039ce264d0c5c100f230",
+    "project-context/case-files/data/dict_tariff.csv": "a34d81dacffbb937ddd542e87d421afcea4842379acfbad55b8d59bdf710f4be",
+    "project-context/case-files/data/traffic.csv": "cb0a3f8827d8be6989b65dc5bf0b7c901047cf64e485f4ee74e3c24787ee846c",
+    "project-context/case-files/environment.py": "8003a305ea9a560270ee875b2c48a6b1fbf8198d9c6c680e4827542532bb3dd1",
+    "project-context/case-files/feature_dictionary.csv": "80bb9dddea7a054c3ef6569805013efbe313c7918a9d72d06203d1534e8f5c21",
+    "project-context/case-files/local_eval.py": "16c3b96b00487c02ee470a23e6b4554c220a5ea817b1ea46b75cfac158dd5b47",
+    "project-context/case-files/make_submission.py": "25c82a71640814de613261a2684824db66c53c7f948af5aa8ba333ae263a9622",
+    "project-context/case-files/mock_environment.py": "e1e4a480126d2896e89a868194b3ed7f7ee48d7c5fc2c8a2491970d8e231f506",
+    "project-context/case-files/scoring_core.py": "ba68595daebb12418000fa4d59ffbbf156df045f589bdbb789f3531145c58327",
+    "project-context/case-files/tariff_dictionary.csv": "d3e6588f5d8e8e51202b4a77b2d4c0243080965a82d8e1d9411149220dd9df1c",
+    "project-context/event-docs/README.md": "56ac6d9a8b6235ab60eb898a15f21b2a3e593a65dc5c83741f8c29096504a755",
+    "project-context/event-docs/Активация OpenAI и NVIDIA.pdf": "9b792450e7bef3ef6b9ab86fadaaf4671ec903938823f0a2ed9bd1a9bea908d4",
+    "project-context/event-docs/Инструкция для участников HackAlem AI.pdf": "90ee9b4e214369400c6af4b526878a33dbb8c830c67bee8abb6cf6b1ebebefdf",
+    "project-context/event-docs/Инструкция для участников_Онлайн-курс Arizona State University.pdf": "51ebf13c46b14aa458ca5802d1af46875489405a71dad0614dda9b21ddb96606",
+    "project-context/event-docs/Инструкция по кибербезопасности.pdf": "3db9e1388a54befc88aab31e18074721b368e33c07a6f33089fd2b8ae0e707f2",
+    "project-context/event-docs/Инструкция по подготовке оборудования.pdf": "960dd616a90c931f9d8e78057720c1422f71036b3a10cd8f1a0de453cd5d40e0",
+    "project-context/event-docs/Правила зачета участия.pdf": "916f0cdb6f2884be345b01ce9ab1596425d69ea3f184d6be4347068b791f62e9"
+  },
+  "reproduced": {
+    "data_audit": {
+      "matches_saved": true
+    },
+    "mechanics": {
+      "matches_saved": true,
+      "checks_passed": 19
+    },
+    "portfolio": {
+      "matches_saved": true,
+      "summary": {
+        "sms_first": {
+          "mean_pct_of_exact": 97.42407119520536,
+          "worst_pct_of_exact": 89.21666795698073,
+          "matches_exact": 7
+        },
+        "multistart": {
+          "mean_pct_of_exact": 99.45388563247299,
+          "worst_pct_of_exact": 94.20799417244149,
+          "matches_exact": 18
+        },
+        "local": {
+          "mean_pct_of_exact": 100.0,
+          "worst_pct_of_exact": 100.0,
+          "matches_exact": 20
+        }
+      }
+    },
+    "exploration": {
+      "matches_saved": true,
+      "results": [
+        {
+          "scenario": "sparse_winners",
+          "policy": "fixed",
+          "mean_net": 18002015.76,
+          "p10_net": 17811094.18,
+          "positive_runs": 100,
+          "mean_pilots": 20.0,
+          "mean_pilot_contacts": 2400.0
+        },
+        {
+          "scenario": "sparse_winners",
+          "policy": "thompson",
+          "mean_net": 17688664.24,
+          "p10_net": 16180840.0,
+          "positive_runs": 100,
+          "mean_pilots": 20.0,
+          "mean_pilot_contacts": 2400.0
+        },
+        {
+          "scenario": "sparse_winners",
+          "policy": "one_step",
+          "mean_net": 18427301.08,
+          "p10_net": 17954654.4,
+          "positive_runs": 100,
+          "mean_pilots": 11.33,
+          "mean_pilot_contacts": 1602.0
+        },
+        {
+          "scenario": "near_ties",
+          "policy": "fixed",
+          "mean_net": 8246417.68,
+          "p10_net": 7150625.46,
+          "positive_runs": 100,
+          "mean_pilots": 20.0,
+          "mean_pilot_contacts": 2400.0
+        },
+        {
+          "scenario": "near_ties",
+          "policy": "thompson",
+          "mean_net": 7967570.63,
+          "p10_net": 6780705.08,
+          "positive_runs": 100,
+          "mean_pilots": 20.0,
+          "mean_pilot_contacts": 2400.0
+        },
+        {
+          "scenario": "near_ties",
+          "policy": "one_step",
+          "mean_net": 8371171.03,
+          "p10_net": 7142132.25,
+          "positive_runs": 100,
+          "mean_pilots": 14.14,
+          "mean_pilot_contacts": 2132.0
+        },
+        {
+          "scenario": "all_negative",
+          "policy": "fixed",
+          "mean_net": -1754225.56,
+          "p10_net": -2085088.61,
+          "positive_runs": 0,
+          "mean_pilots": 20.0,
+          "mean_pilot_contacts": 2400.0
+        },
+        {
+          "scenario": "all_negative",
+          "policy": "thompson",
+          "mean_net": -1348946.62,
+          "p10_net": -1668861.26,
+          "positive_runs": 0,
+          "mean_pilots": 20.0,
+          "mean_pilot_contacts": 2400.0
+        },
+        {
+          "scenario": "all_negative",
+          "policy": "one_step",
+          "mean_net": -1053394.9,
+          "p10_net": -1396713.75,
+          "positive_runs": 0,
+          "mean_pilots": 11.82,
+          "mean_pilot_contacts": 1700.8
+        },
+        {
+          "scenario": "weak_positive",
+          "policy": "fixed",
+          "mean_net": 1128051.91,
+          "p10_net": 692871.21,
+          "positive_runs": 100,
+          "mean_pilots": 20.0,
+          "mean_pilot_contacts": 2400.0
+        },
+        {
+          "scenario": "weak_positive",
+          "policy": "thompson",
+          "mean_net": 1057760.08,
+          "p10_net": 664218.49,
+          "positive_runs": 100,
+          "mean_pilots": 20.0,
+          "mean_pilot_contacts": 2400.0
+        },
+        {
+          "scenario": "weak_positive",
+          "policy": "one_step",
+          "mean_net": 1095408.69,
+          "p10_net": 690383.7,
+          "positive_runs": 100,
+          "mean_pilots": 15.39,
+          "mean_pilot_contacts": 2370.0
+        }
+      ]
+    },
+    "priors": {
+      "matches_saved": true,
+      "coverage": {
+        "possible_nonself_actions": 1260,
+        "historically_supported_actions": 456,
+        "historically_supported_actions_pct": 36.19,
+        "actions_with_at_least_10_observations": 259,
+        "actions_with_at_least_10_observations_pct": 20.56,
+        "no_historically_supported_target": {
+          "cells": 3,
+          "profiles": 30,
+          "predicted_arpu_sum": 153547.535
+        },
+        "cells_over_5000_profiles": {
+          "cells": 0,
+          "profiles": 0,
+          "predicted_arpu_sum": 0
+        },
+        "cells_under_150_profiles": {
+          "cells": 42,
+          "profiles": 1345,
+          "predicted_arpu_sum": 6789876.146
+        },
+        "cells_under_10_profiles": {
+          "cells": 9,
+          "profiles": 60,
+          "predicted_arpu_sum": 264219.664
+        }
+      }
+    }
+  },
+  "data_reconciliation": {
+    "raw_rows": 14823,
+    "exact_duplicates": 6,
+    "amir_mock_cleaning": {
+      "rows": 12705,
+      "actions": 451,
+      "deduplicates": false,
+      "previous_arpu_min": 100
+    },
+    "azamat_cleaning": {
+      "rows": 13410,
+      "actions": 456,
+      "deduplicates": true,
+      "previous_arpu_strictly_above": 0
+    },
+    "recommended_ranking_cleaning": {
+      "rows": 12699,
+      "actions": 451,
+      "deduplicates": true,
+      "previous_arpu_min": 100
+    },
+    "five_extra_actions": [
+      [
+        "tariff_11",
+        "LOW",
+        "tariff_1"
+      ],
+      [
+        "tariff_12",
+        "LOW",
+        "tariff_21"
+      ],
+      [
+        "tariff_17",
+        "LOW",
+        "tariff_11"
+      ],
+      [
+        "tariff_19",
+        "LOW",
+        "tariff_12"
+      ],
+      [
+        "tariff_2",
+        "LOW",
+        "tariff_12"
+      ]
+    ],
+    "history_boundary_counts": {
+      "1000": 0,
+      "5000": 0
+    },
+    "id_overlap": {
+      "change_tariff": 0,
+      "traffic": 0,
+      "arpu_monthly": 0
+    },
+    "profiles": 23441,
+    "known_cells": 63,
+    "known_profiles": 23341,
+    "max_cell_size": 4726,
+    "baseline_arpu": 150641084.24626845,
+    "top_four_baseline_share": 0.6050711507022313,
+    "history_columns": [
+      "TIME_KEY",
+      "AVG_ARPU_PREV_3M",
+      "AVG_ARPU_NEXT_3M",
+      "ID_NUMBER",
+      "tariff_plan_code_from",
+      "tariff_plan_code_to"
+    ]
+  },
+  "new_mechanism_probes": {
+    "gaussian_update": {
+      "mean": 0.02763514189829642,
+      "variance": 0.0016056387655647513,
+      "sequential_matches_batch": true
+    },
+    "call_nonidentifiability": [
+      {
+        "push": 0.1,
+        "sms": 0.13,
+        "digital_ads": 0.17,
+        "call": 0.24
+      },
+      {
+        "push": 0.1,
+        "sms": 0.13,
+        "digital_ads": 0.17,
+        "call": 0.2
+      }
+    ],
+    "public_pilot_baseline": {
+      "seed": 42,
+      "n": 20,
+      "recovered_sum": 70598.0,
+      "harness_actual_sum": 70598.0,
+      "full_cell_formula_gross": 35952.94,
+      "scorer_gross": 35952.939999999995,
+      "ids_not_returned_to_agent": true
+    },
+    "expected_overlap": {
+      "enumerated_outcomes": 36,
+      "mean_gross": 7.5,
+      "formula_gross": 7.5,
+      "includes_negative_effects": true
+    },
+    "negative_observation_clipping": {
+      "true_ratio": 0,
+      "n": 120,
+      "expected_clipped_ratio": 0.029280297939867726
+    },
+    "pilot_se": {
+      "40": 0.12712356193876884,
+      "120": 0.07339482270569227,
+      "150": 0.06564632510658917,
+      "180": 0.059926621796994366,
+      "200": 0.05685138520739842
+    },
+    "sms_information_over_push": 1.6900000000000002,
+    "numpy_legacy_aliases": {
+      "infty": false,
+      "alltrue": false
+    },
+    "net_per_cost_at_zero_cost": "undefined; do not use for push"
+  },
+  "new_portfolio_stress": {
+    "scope": "Known synthetic effects, 8 disjoint whole blocks, no pilots, skip-all allowed. Not an Agent/API performance test.",
+    "enumerated_assignments_per_world": 65536,
+    "families": [
+      {
+        "family": "mixed_signs",
+        "world_seeds": "1000..1019",
+        "cases": 20,
+        "row_limit": 10,
+        "summary": {
+          "sms_first": {
+            "matches_exact": 7,
+            "mean_gap": 114786.72921353069,
+            "worst_gap": 502294.8940755585,
+            "mean_pct_when_exact_positive": 97.02563037592562
+          },
+          "multistart": {
+            "matches_exact": 19,
+            "mean_gap": 13598.776127006113,
+            "worst_gap": 271975.52254012227,
+            "mean_pct_when_exact_positive": 99.72201040006203
+          },
+          "local": {
+            "matches_exact": 20,
+            "mean_gap": 0.0,
+            "worst_gap": 0.0,
+            "mean_pct_when_exact_positive": 100.0
+          }
+        }
+      },
+      {
+        "family": "weak_effects",
+        "world_seeds": "1000..1019",
+        "cases": 20,
+        "row_limit": 10,
+        "summary": {
+          "sms_first": {
+            "matches_exact": 5,
+            "mean_gap": 6114.6819528388,
+            "worst_gap": 19357.15607505686,
+            "mean_pct_when_exact_positive": 96.90157543269258
+          },
+          "multistart": {
+            "matches_exact": 19,
+            "mean_gap": 139.0512345801777,
+            "worst_gap": 2781.024691603554,
+            "mean_pct_when_exact_positive": 99.95969812070143
+          },
+          "local": {
+            "matches_exact": 20,
+            "mean_gap": 0.0,
+            "worst_gap": 0.0,
+            "mean_pct_when_exact_positive": 100.0
+          }
+        }
+      },
+      {
+        "family": "all_negative",
+        "world_seeds": "1000..1019",
+        "cases": 20,
+        "row_limit": 10,
+        "summary": {
+          "sms_first": {
+            "matches_exact": 20,
+            "mean_gap": 0.0,
+            "worst_gap": 0.0,
+            "mean_pct_when_exact_positive": null
+          },
+          "multistart": {
+            "matches_exact": 20,
+            "mean_gap": 0.0,
+            "worst_gap": 0.0,
+            "mean_pct_when_exact_positive": null
+          },
+          "local": {
+            "matches_exact": 20,
+            "mean_gap": 0.0,
+            "worst_gap": 0.0,
+            "mean_pct_when_exact_positive": null
+          }
+        }
+      },
+      {
+        "family": "three_slots",
+        "world_seeds": "1000..1019",
+        "cases": 20,
+        "row_limit": 3,
+        "summary": {
+          "sms_first": {
+            "matches_exact": 6,
+            "mean_gap": 494531.2952864625,
+            "worst_gap": 1684460.566849147,
+            "mean_pct_when_exact_positive": 90.81890249929728
+          },
+          "multistart": {
+            "matches_exact": 17,
+            "mean_gap": 32978.85120469858,
+            "worst_gap": 354631.9360322505,
+            "mean_pct_when_exact_positive": 99.46602748248239
+          },
+          "local": {
+            "matches_exact": 20,
+            "mean_gap": 0.0,
+            "worst_gap": 0.0,
+            "mean_pct_when_exact_positive": 100.0
+          }
+        }
+      }
+    ]
+  }
+}
