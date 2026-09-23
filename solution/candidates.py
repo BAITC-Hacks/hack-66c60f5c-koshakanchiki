@@ -306,10 +306,11 @@ def _reserve_overview(queue, hist_rank):
 def build_catalog(profile, tariffs, hist_rank):
     """Return up to 40 distinct actions, with at most four per cell.
 
-    Each basis has a queue of cells ordered by descending A_sum (ties by cell
-    key). Round-robin over the four basis queues balances reasons for trying a
-    target. Within a cell, a target already selected for an earlier basis is
-    skipped in favor of the next eligible target. The first six keep that order;
+    Cells are ordered by descending A_sum (ties by cell key). The ten most
+    valuable cells are visited once before their second/third/fourth targets,
+    then other cells fill available slots. Within a cell, a target already
+    selected for an earlier basis is skipped for the next eligible target.
+    The first six therefore favor breadth across valuable cells;
     slots seven/eight reserve a non-HIGH and an unsupported action when possible.
     Reserves are selected before truncating the full queue to 40.
 
@@ -349,8 +350,18 @@ def build_catalog(profile, tariffs, hist_rank):
             lanes[index].append({"from_tariff": source, "arpu_segment": segment,
                                  "target": target, "basis": BASES[index],
                                  "prior_rank": float(hist_rank.get((source, segment, target), 0.0))})
-    queue = [lane[index] for index in range(max(map(len, lanes), default=0))
-             for lane in lanes if index < len(lane)]
+    ordered_cells = [cell for cell in sorted(cells, key=lambda cell: (-cells[cell]["A_sum"], cell))
+                     if cell[0] in positions]
+    choices = {cell: [] for cell in ordered_cells}
+    for lane in lanes:
+        for action in lane:
+            choices[(action["from_tariff"], action["arpu_segment"])].append(action)
+
+    def round_robin(cell_list):
+        return [choices[cell][index] for index in range(len(BASES))
+                for cell in cell_list if index < len(choices[cell])]
+
+    queue = round_robin(ordered_cells[:10]) + round_robin(ordered_cells[10:])
     return _reserve_overview(queue, hist_rank)
 
 
