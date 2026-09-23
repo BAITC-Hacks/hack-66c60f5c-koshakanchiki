@@ -1,0 +1,271 @@
+{
+  "python": "3.12.14",
+  "numpy": "2.5.3",
+  "pandas": "3.0.6",
+  "source_sha256": {
+    "agent.py": "39ecc621329cfa689f19509f99914e9d267a952d658ba7bfbd36ea01902d6f65",
+    "beliefs.py": "54e6c62dbbe2bb4513567b5dfe76f6f597a58a5bf3c7dff1ef8144e8ddfec019",
+    "candidates.py": "2bcd881696569baeddca3bae42b732d5ba4c5ff6136f28abf6b730188bcc82da",
+    "planner.py": "26e388faff020bb5248dbfb6c14aa245c409006292cfe9d14273ca5ff858eb22",
+    "historical_candidates.json": "454234aa055ee59cf710c04b7a54ca049e9e830a566a33fb3d0a4fbaf7ec8bf1",
+    "validate_solution.py": "32ab40238d48c01375df5e2b17d5344b784be4ef6b564ffeb65ab9c8f94c477a"
+  },
+  "checks": {
+    "beliefs": {
+      "ok": true,
+      "details": {
+        "channels": 3,
+        "draws": [
+          64,
+          2
+        ],
+        "actual_n": 7
+      },
+      "elapsed_seconds": 0.021519250003620982
+    },
+    "cells": {
+      "ok": true,
+      "details": {
+        "empty_cell": "ok",
+        "baseline_outlier": "preserved"
+      },
+      "elapsed_seconds": 0.0038890838623046875
+    },
+    "simulator": {
+      "ok": true,
+      "details": {
+        "official_match": true,
+        "cap": 5000,
+        "negative_max": "preserved",
+        "free_budget": "ok"
+      },
+      "elapsed_seconds": 0.015804874943569303
+    },
+    "small_pilot": {
+      "ok": true,
+      "details": {
+        "requested": 10,
+        "actual": 7,
+        "empty_pilot": "no resource mutation"
+      },
+      "elapsed_seconds": 0.00197366694919765
+    },
+    "agent_contract": {
+      "ok": true,
+      "details": {
+        "final_contacts": 1720,
+        "final_cost": 37840,
+        "pilot_calls": 12,
+        "pilot_contacts": 1680,
+        "pilot_cost": 6720,
+        "elapsed_seconds": 0.11090541700832546,
+        "repeat_same_instance": true,
+        "final_rows": 1
+      },
+      "elapsed_seconds": 0.33332929108291864
+    },
+    "agent_boundaries": {
+      "ok": true,
+      "details": {
+        "actual_n_below_ten": {
+          "final_contacts": 7,
+          "final_cost": 0,
+          "pilot_calls": 2,
+          "pilot_contacts": 14,
+          "pilot_cost": 56,
+          "elapsed_seconds": 0.007492332952097058
+        },
+        "zero_budget": {
+          "final_contacts": 7,
+          "final_cost": 0,
+          "pilot_calls": 0,
+          "pilot_contacts": 0,
+          "pilot_cost": 0,
+          "elapsed_seconds": 0.004757249960675836
+        },
+        "pilot_failure": {
+          "final_contacts": 7,
+          "final_cost": 0,
+          "pilot_calls": 0,
+          "pilot_contacts": 0,
+          "pilot_cost": 0,
+          "elapsed_seconds": 0.004631584044545889
+        },
+        "invalid_observation": {
+          "final_contacts": 7,
+          "final_cost": 0,
+          "pilot_calls": 2,
+          "pilot_contacts": 14,
+          "pilot_cost": 56,
+          "elapsed_seconds": 0.006975041935220361
+        }
+      },
+      "elapsed_seconds": 0.029478791868314147
+    },
+    "export": {
+      "ok": true,
+      "details": {
+        "rows": 1,
+        "sha256": "67436e9e9ec500ae16af2d58ad1ab05728b453fb15fa2023519b86f8b957395e",
+        "clean_processes": 2,
+        "llm_key": "absent"
+      },
+      "elapsed_seconds": 0.6710515830200166
+    },
+    "synthetic_worlds": {
+      "ok": true,
+      "details": {
+        "purpose": "correctness smoke test; no paired superiority claim",
+        "runs": [
+          {
+            "family": "rare_winners",
+            "world_seed": 100,
+            "noise_seed": 1000,
+            "net_arpu_gain": -314422.9811647891,
+            "final_contacts": 1,
+            "final_cost": 0,
+            "pilot_calls": 12,
+            "pilot_contacts": 1680,
+            "pilot_cost": 6720,
+            "elapsed_seconds": 0.21355495788156986
+          },
+          {
+            "family": "rare_winners",
+            "world_seed": 100,
+            "noise_seed": 1001,
+            "net_arpu_gain": -453875.02094160835,
+            "final_contacts": 567,
+            "final_cost": 12474,
+            "pilot_calls": 12,
+            "pilot_contacts": 1680,
+            "pilot_cost": 6720,
+            "elapsed_seconds": 0.14027391700074077
+          },
+          {
+            "family": "close_effects",
+            "world_seed": 100,
+            "noise_seed": 1000,
+            "net_arpu_gain": 5064094.510469496,
+            "final_contacts": 8005,
+            "final_cost": 91894,
+            "pilot_calls": 12,
+            "pilot_contacts": 1680,
+            "pilot_cost": 6720,
+            "elapsed_seconds": 0.5795820408966392
+          },
+          {
+            "family": "close_effects",
+            "world_seed": 100,
+            "noise_seed": 1001,
+            "net_arpu_gain": 8221449.950321073,
+            "final_contacts": 12905,
+            "final_cost": 93280,
+            "pilot_calls": 12,
+            "pilot_contacts": 1680,
+            "pilot_cost": 6720,
+            "elapsed_seconds": 0.403221792075783
+          },
+          {
+            "family": "weak_positive",
+            "world_seed": 100,
+            "noise_seed": 1000,
+            "net_arpu_gain": 659666.7851543338,
+            "final_contacts": 4177,
+            "final_cost": 91894,
+            "pilot_calls": 12,
+            "pilot_contacts": 1680,
+            "pilot_cost": 6720,
+            "elapsed_seconds": 0.2994875421281904
+          },
+          {
+            "family": "weak_positive",
+            "world_seed": 100,
+            "noise_seed": 1001,
+            "net_arpu_gain": 499285.2925984522,
+            "final_contacts": 2200,
+            "final_cost": 48400,
+            "pilot_calls": 12,
+            "pilot_contacts": 1680,
+            "pilot_cost": 6720,
+            "elapsed_seconds": 0.16979770897887647
+          },
+          {
+            "family": "all_negative",
+            "world_seed": 100,
+            "noise_seed": 1000,
+            "net_arpu_gain": -1083927.535293058,
+            "final_contacts": 1,
+            "final_cost": 0,
+            "pilot_calls": 10,
+            "pilot_contacts": 1320,
+            "pilot_cost": 5280,
+            "elapsed_seconds": 0.10514191701076925
+          },
+          {
+            "family": "all_negative",
+            "world_seed": 100,
+            "noise_seed": 1001,
+            "net_arpu_gain": -925656.996252077,
+            "final_contacts": 1,
+            "final_cost": 0,
+            "pilot_calls": 9,
+            "pilot_contacts": 1140,
+            "pilot_cost": 4560,
+            "elapsed_seconds": 0.10011712508276105
+          },
+          {
+            "family": "history_misleading",
+            "world_seed": 100,
+            "noise_seed": 1000,
+            "net_arpu_gain": 758544.2422723745,
+            "final_contacts": 567,
+            "final_cost": 12474,
+            "pilot_calls": 12,
+            "pilot_contacts": 1680,
+            "pilot_cost": 6720,
+            "elapsed_seconds": 0.13995583401992917
+          },
+          {
+            "family": "history_misleading",
+            "world_seed": 100,
+            "noise_seed": 1001,
+            "net_arpu_gain": 1015856.2891404477,
+            "final_contacts": 567,
+            "final_cost": 12474,
+            "pilot_calls": 10,
+            "pilot_contacts": 1320,
+            "pilot_cost": 5280,
+            "elapsed_seconds": 0.11725166696123779
+          },
+          {
+            "family": "outside_high",
+            "world_seed": 100,
+            "noise_seed": 1000,
+            "net_arpu_gain": 4915753.594635622,
+            "final_contacts": 2947,
+            "final_cost": 64834,
+            "pilot_calls": 12,
+            "pilot_contacts": 1680,
+            "pilot_cost": 6720,
+            "elapsed_seconds": 0.26182337501086295
+          },
+          {
+            "family": "outside_high",
+            "world_seed": 100,
+            "noise_seed": 1001,
+            "net_arpu_gain": 4655782.873927692,
+            "final_contacts": 3514,
+            "final_cost": 77308,
+            "pilot_calls": 12,
+            "pilot_contacts": 1680,
+            "pilot_cost": 6720,
+            "elapsed_seconds": 0.33821020810864866
+          }
+        ]
+      },
+      "elapsed_seconds": 3.5808783750981092
+    }
+  },
+  "ok": true,
+  "source_unchanged": true
+}

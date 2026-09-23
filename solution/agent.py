@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from beliefs import Beliefs, NOISE_STD
 from candidates import build_catalog, cell_stats, load_or_build_historical_rank
+from planner import build_portfolio
 
 LOG = logging.getLogger(__name__)
 COSTS = {'push': 0, 'sms': 4, 'digital_ads': 22}
@@ -31,61 +32,6 @@ def _audience(profile, row):
     if current is not None:
         result = result[result.current_tariff.isin(str(current).split(';'))]
     return result.sort_values('ID_NUMBER', kind='stable').iloc[:5000]
-
-
-def _mva_stats(profile):
-    stats = {}
-    for key, group in profile.groupby(['current_tariff', 'arpu_segment'], observed=True):
-        group = group.sort_values('ID_NUMBER', kind='stable')
-        arpu = group.predicted_arpu.to_numpy(dtype=float)
-        stats[tuple(key)] = {'N': len(group), 'A_sum': float(arpu.sum()),
-                             'ids_sorted': group.ID_NUMBER.to_numpy(),
-                             'prefix_arpu': np.r_[0.0, np.cumsum(arpu)]}
-    return stats
-
-
-def _mva_catalog(stats, tariffs):
-    ordered = tariffs.sort_values(['price_tariff', 'tariff_plan_code'], ascending=[False, True])
-    queue = []
-    for cell in sorted(stats, key=lambda s: (-stats[s]['A_sum'], s)):
-        targets = [str(t) for t in ordered.tariff_plan_code if t != cell[0]]
-        if targets:
-            queue.append({'from_tariff': cell[0], 'arpu_segment': cell[1],
-                          'target': targets[0], 'basis': 'expensive_package', 'prior_rank': 0.0})
-        if len(queue) >= 12:
-            break
-    return queue
-
-
-def _mva_portfolio(beliefs, stats, resources, k=1.0):
-    variants = []
-    for key in sorted(beliefs.observed):
-        cell = stats.get(key[:2])
-        if not cell:
-            continue
-        n = min(cell['N'], 5000)
-        arpu = float(cell['prefix_arpu'][n])
-        for channel, cost in COSTS.items():
-            value = (beliefs.mean_ratio(key, channel) - k * beliefs.sd_ratio(key, channel)) * arpu - n * cost
-            if value > 0:
-                variants.append((value, key, channel, n, n * cost))
-    plans = []
-    for mode in ('net', 'contact', 'sms'):
-        remaining_h, remaining_b = int(resources['remaining_contacts']), float(resources['remaining_budget'])
-        used, selected = set(), []
-        order = sorted(variants, key=lambda v: (-(v[0] / v[3] if mode == 'contact' else v[0]), v[1], v[2]))
-        if mode == 'sms':
-            order.sort(key=lambda v: v[2] != 'sms')
-        for value, key, channel, n, cost in order:
-            if key[:2] in used or n > remaining_h or cost > remaining_b or len(selected) >= 10:
-                continue
-            selected.append((value, _row(key, channel)))
-            used.add(key[:2])
-            remaining_h -= n
-            remaining_b -= cost
-        selected.sort(key=lambda pair: (-pair[0], pair[1]['campaign_name']))
-        plans.append((sum(v for v, _ in selected), [row for _, row in selected]))
-    return max(plans, key=lambda pair: pair[0])[1]
 
 
 def _fallback(profile, tariffs, beliefs):
@@ -155,6 +101,8 @@ class Agent:
         profile, tariffs = None, None
         try:
             profile, tariffs = env.customer_profile.copy(), env.tariffs.copy()
+            # Establish a legal recovery plan before optional data preparation.
+            fallback = _fallback(profile, tariffs, beliefs)
             stats = cell_stats(profile)
             history_path = Path(__file__).parent / 'data' / 'change_tariff.csv'
             if not history_path.is_file():
@@ -163,7 +111,6 @@ class Agent:
             catalog = build_catalog(profile, tariffs, history)
             keys = [(c['from_tariff'], c['arpu_segment'], c['target']) for c in catalog]
             beliefs.register(keys)
-            fallback = _fallback(profile, tariffs, beliefs)
             initial_h, initial_b = int(env.remaining_contacts), float(env.remaining_budget)
             reserve_h = min(12520, max(1, initial_h - 2480))
             reserve_b = max(0.0, initial_b - 9920)
@@ -209,22 +156,39 @@ class Agent:
                     break
                 request = {'target_tariff': key[2], 'channel': 'sms', 'n_customers': max(10, int(allowed)),
                            'filter_current_tariff': key[0], 'filter_arpu_segment': key[1]}
+                before_h, before_b = int(env.remaining_contacts), float(env.remaining_budget)
+                pilot_error = None
                 try:
                     response = env.run_pilot(**request)
                 except Exception as error:
-                    LOG.warning('Pilot stopped: %s', error)
-                    break
+                    pilot_error, response = str(error), {}
+                if not isinstance(response, dict):
+                    LOG.warning('Pilot returned a non-dictionary response')
+                    response = {}
+                # Resource deltas remain valid even when the response is malformed.
+                actual_n = max(0, before_h - int(env.remaining_contacts))
+                cost = max(0.0, before_b - float(env.remaining_budget))
                 record = {'action_key': key, 'request': request, 'result': dict(response),
-                          'channel': 'sms', 'actual_n': response.get('n_customers', 0),
+                          'channel': 'sms', 'actual_n': actual_n,
                           'observed_ratio': response.get('observed_lift_ratio'),
-                          'cost': response.get('cost', 0), 'elapsed_seconds': time.monotonic() - started}
+                          'cost': cost, 'elapsed_seconds': time.monotonic() - started}
+                if pilot_error is not None:
+                    record['error'] = pilot_error
                 self.pilot_log.append(record)
-                if beliefs.update(key, 'sms', record['actual_n'], record['observed_ratio']):
+                if pilot_error is not None:
+                    LOG.warning('Pilot stopped: %s', pilot_error)
+                    break
+                if beliefs.update(key, 'sms', actual_n, record['observed_ratio']):
                     y, total = float(record['observed_ratio']), response.get('observed_lift_total')
-                    if total is not None and y != 0 and np.isfinite(float(total) / y):
-                        record['sample_arpu'] = float(total) / y
-                    proposed = _mva_portfolio(beliefs, stats, resources())
-                    plan = _validate_plan(profile, tariffs, proposed, resources()) or plan
+                    try:
+                        if total is not None and y != 0 and np.isfinite(float(total) / y):
+                            record['sample_arpu'] = float(total) / y
+                    except (TypeError, ValueError, OverflowError):
+                        LOG.warning('Ignoring malformed optional pilot total')
+                # A successful update may invalidate yesterday's positive choice.
+                plan = []
+                proposed = build_portfolio(beliefs, stats, resources())
+                plan = _validate_plan(profile, tariffs, proposed, resources())
             final_resources = resources()
             plan = _validate_plan(profile, tariffs, plan, final_resources)
             if not plan:
@@ -242,7 +206,7 @@ class Agent:
                 try:
                     current = {'remaining_budget': env.remaining_budget, 'remaining_contacts': env.remaining_contacts}
                     return (_validate_plan(profile, tariffs, plan, current)
-                            or _validate_plan(profile, tariffs, fallback, current))
+                            or _validate_plan(profile, tariffs, _fallback(profile, tariffs, beliefs), current))
                 except Exception:
                     pass
             return fallback
