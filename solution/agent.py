@@ -88,6 +88,34 @@ def _validate_plan(profile, tariffs, rows, resources):
     return result
 
 
+def _push_topup(beliefs, stats, plan):
+    """Fill left-over campaign slots/reach with free push on measured cells.
+
+    Push costs nothing, so any cell with a cautiously positive push estimate
+    that the primary plan did not already cover is pure upside: it cannot
+    crowd out a paid campaign's budget and _validate_plan enforces the same
+    row/contact/dedup limits as the primary plan. One target per cell (the
+    best observed push estimate); cells already used by ``plan`` are skipped.
+    """
+    covered = {(row['filter_current_tariff'], row['filter_arpu_segment']) for row in plan}
+    best = {}
+    for key in sorted(beliefs.observed):
+        cell_key = key[:2]
+        if cell_key in covered:
+            continue
+        cell = stats.get(cell_key)
+        if not cell or cell['N'] <= 0:
+            continue
+        n = min(cell['N'], 5000)
+        value = (beliefs.mean_ratio(key, 'push') - beliefs.sd_ratio(key, 'push')) * cell['prefix_arpu'][n]
+        if value <= 0:
+            continue
+        if cell_key not in best or value > best[cell_key][0]:
+            best[cell_key] = (value, key)
+    extra = sorted(best.values(), key=lambda item: (-item[0], item[1]))
+    return plan + [_row(key, 'push') for _, key in extra]
+
+
 class Agent:
     """Each act has a fresh posterior, ledger and deterministic randomness."""
     def act(self, env):
@@ -193,6 +221,7 @@ class Agent:
             plan = _validate_plan(profile, tariffs, plan, final_resources)
             if not plan:
                 plan = _validate_plan(profile, tariffs, _fallback(profile, tariffs, beliefs), final_resources)
+            plan = _validate_plan(profile, tariffs, _push_topup(beliefs, stats, plan), final_resources)
             self.summary = {'pilot_count': len(self.pilot_log), 'campaign_count': len(plan),
                             'pilot_contacts': sum(r['actual_n'] for r in self.pilot_log),
                             'pilot_cost': sum(r['cost'] for r in self.pilot_log),
