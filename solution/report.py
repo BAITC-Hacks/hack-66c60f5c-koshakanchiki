@@ -20,7 +20,7 @@ SUMMARY_LABELS = {
     "final_cost": "Стоимость финального плана",
     "remaining_contacts": "Остаток контактов",
     "remaining_budget": "Остаток бюджета",
-    "n_pilots": "Число пилотов",
+    "pilot_count": "Число пилотов",
     "k": "Коэффициент осторожности k",
     "evaluator_net": "Фактический net evaluator",
 }
