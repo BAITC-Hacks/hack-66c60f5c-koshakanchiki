@@ -6,7 +6,7 @@
     "agent.py": "39ecc621329cfa689f19509f99914e9d267a952d658ba7bfbd36ea01902d6f65",
     "beliefs.py": "54e6c62dbbe2bb4513567b5dfe76f6f597a58a5bf3c7dff1ef8144e8ddfec019",
     "candidates.py": "2bcd881696569baeddca3bae42b732d5ba4c5ff6136f28abf6b730188bcc82da",
-    "planner.py": "26e388faff020bb5248dbfb6c14aa245c409006292cfe9d14273ca5ff858eb22",
+    "planner.py": "c49ca41163d5f9360d9531598a1c670f6be3bf465b8bee6a8b57484dc5a1d202",
     "historical_candidates.json": "454234aa055ee59cf710c04b7a54ca049e9e830a566a33fb3d0a4fbaf7ec8bf1",
     "validate_solution.py": "32ab40238d48c01375df5e2b17d5344b784be4ef6b564ffeb65ab9c8f94c477a"
   },
@@ -21,7 +21,7 @@
         ],
         "actual_n": 7
       },
-      "elapsed_seconds": 0.021519250003620982
+      "elapsed_seconds": 0.013936375034973025
     },
     "cells": {
       "ok": true,
@@ -29,7 +29,7 @@
         "empty_cell": "ok",
         "baseline_outlier": "preserved"
       },
-      "elapsed_seconds": 0.0038890838623046875
+      "elapsed_seconds": 0.003613624954596162
     },
     "simulator": {
       "ok": true,
@@ -39,7 +39,7 @@
         "negative_max": "preserved",
         "free_budget": "ok"
       },
-      "elapsed_seconds": 0.015804874943569303
+      "elapsed_seconds": 0.01594779104925692
     },
     "small_pilot": {
       "ok": true,
@@ -48,7 +48,7 @@
         "actual": 7,
         "empty_pilot": "no resource mutation"
       },
-      "elapsed_seconds": 0.00197366694919765
+      "elapsed_seconds": 0.002961166901513934
     },
     "agent_contract": {
       "ok": true,
@@ -58,11 +58,11 @@
         "pilot_calls": 12,
         "pilot_contacts": 1680,
         "pilot_cost": 6720,
-        "elapsed_seconds": 0.11090541700832546,
+        "elapsed_seconds": 0.08970779203809798,
         "repeat_same_instance": true,
         "final_rows": 1
       },
-      "elapsed_seconds": 0.33332929108291864
+      "elapsed_seconds": 0.3025395830627531
     },
     "agent_boundaries": {
       "ok": true,
@@ -73,7 +73,7 @@
           "pilot_calls": 2,
           "pilot_contacts": 14,
           "pilot_cost": 56,
-          "elapsed_seconds": 0.007492332952097058
+          "elapsed_seconds": 0.00801774999126792
         },
         "zero_budget": {
           "final_contacts": 7,
@@ -81,7 +81,7 @@
           "pilot_calls": 0,
           "pilot_contacts": 0,
           "pilot_cost": 0,
-          "elapsed_seconds": 0.004757249960675836
+          "elapsed_seconds": 0.004558291984722018
         },
         "pilot_failure": {
           "final_contacts": 7,
@@ -89,7 +89,7 @@
           "pilot_calls": 0,
           "pilot_contacts": 0,
           "pilot_cost": 0,
-          "elapsed_seconds": 0.004631584044545889
+          "elapsed_seconds": 0.0045150830410420895
         },
         "invalid_observation": {
           "final_contacts": 7,
@@ -97,20 +97,20 @@
           "pilot_calls": 2,
           "pilot_contacts": 14,
           "pilot_cost": 56,
-          "elapsed_seconds": 0.006975041935220361
+          "elapsed_seconds": 0.007588332984596491
         }
       },
-      "elapsed_seconds": 0.029478791868314147
+      "elapsed_seconds": 0.030575125012546778
     },
     "export": {
       "ok": true,
       "details": {
         "rows": 1,
-        "sha256": "67436e9e9ec500ae16af2d58ad1ab05728b453fb15fa2023519b86f8b957395e",
+        "sha256": "7b708de2a90b4af9793bfedb7492d678f90c29811ae53ccf5cb28e969747a359",
         "clean_processes": 2,
         "llm_key": "absent"
       },
-      "elapsed_seconds": 0.6710515830200166
+      "elapsed_seconds": 0.6508672500494868
     },
     "synthetic_worlds": {
       "ok": true,
@@ -127,7 +127,7 @@
             "pilot_calls": 12,
             "pilot_contacts": 1680,
             "pilot_cost": 6720,
-            "elapsed_seconds": 0.21355495788156986
+            "elapsed_seconds": 0.1260911668650806
           },
           {
             "family": "rare_winners",
@@ -139,7 +139,7 @@
             "pilot_calls": 12,
             "pilot_contacts": 1680,
             "pilot_cost": 6720,
-            "elapsed_seconds": 0.14027391700074077
+            "elapsed_seconds": 0.0917484168894589
           },
           {
             "family": "close_effects",
@@ -151,31 +151,31 @@
             "pilot_calls": 12,
             "pilot_contacts": 1680,
             "pilot_cost": 6720,
-            "elapsed_seconds": 0.5795820408966392
+            "elapsed_seconds": 0.15340316691435874
           },
           {
             "family": "close_effects",
             "world_seed": 100,
             "noise_seed": 1001,
-            "net_arpu_gain": 8221449.950321073,
-            "final_contacts": 12905,
-            "final_cost": 93280,
+            "net_arpu_gain": 8105882.527045127,
+            "final_contacts": 13211,
+            "final_cost": 92338,
             "pilot_calls": 12,
             "pilot_contacts": 1680,
             "pilot_cost": 6720,
-            "elapsed_seconds": 0.403221792075783
+            "elapsed_seconds": 0.12565070786513388
           },
           {
             "family": "weak_positive",
             "world_seed": 100,
             "noise_seed": 1000,
-            "net_arpu_gain": 659666.7851543338,
+            "net_arpu_gain": 592138.6743229914,
             "final_contacts": 4177,
-            "final_cost": 91894,
+            "final_cost": 16708,
             "pilot_calls": 12,
             "pilot_contacts": 1680,
             "pilot_cost": 6720,
-            "elapsed_seconds": 0.2994875421281904
+            "elapsed_seconds": 0.11309191607870162
           },
           {
             "family": "weak_positive",
@@ -187,7 +187,7 @@
             "pilot_calls": 12,
             "pilot_contacts": 1680,
             "pilot_cost": 6720,
-            "elapsed_seconds": 0.16979770897887647
+            "elapsed_seconds": 0.09603750007227063
           },
           {
             "family": "all_negative",
@@ -199,7 +199,7 @@
             "pilot_calls": 10,
             "pilot_contacts": 1320,
             "pilot_cost": 5280,
-            "elapsed_seconds": 0.10514191701076925
+            "elapsed_seconds": 0.11051029106602073
           },
           {
             "family": "all_negative",
@@ -211,7 +211,7 @@
             "pilot_calls": 9,
             "pilot_contacts": 1140,
             "pilot_cost": 4560,
-            "elapsed_seconds": 0.10011712508276105
+            "elapsed_seconds": 0.11551133310422301
           },
           {
             "family": "history_misleading",
@@ -223,7 +223,7 @@
             "pilot_calls": 12,
             "pilot_contacts": 1680,
             "pilot_cost": 6720,
-            "elapsed_seconds": 0.13995583401992917
+            "elapsed_seconds": 0.09099712502211332
           },
           {
             "family": "history_misleading",
@@ -235,7 +235,7 @@
             "pilot_calls": 10,
             "pilot_contacts": 1320,
             "pilot_cost": 5280,
-            "elapsed_seconds": 0.11725166696123779
+            "elapsed_seconds": 0.08183079189620912
           },
           {
             "family": "outside_high",
@@ -247,7 +247,7 @@
             "pilot_calls": 12,
             "pilot_contacts": 1680,
             "pilot_cost": 6720,
-            "elapsed_seconds": 0.26182337501086295
+            "elapsed_seconds": 0.1257658749818802
           },
           {
             "family": "outside_high",
@@ -259,11 +259,11 @@
             "pilot_calls": 12,
             "pilot_contacts": 1680,
             "pilot_cost": 6720,
-            "elapsed_seconds": 0.33821020810864866
+            "elapsed_seconds": 0.11334137502126396
           }
         ]
       },
-      "elapsed_seconds": 3.5808783750981092
+      "elapsed_seconds": 2.0656720001716167
     }
   },
   "ok": true,

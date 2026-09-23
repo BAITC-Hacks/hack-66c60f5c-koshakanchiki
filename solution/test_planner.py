@@ -6,7 +6,7 @@ from unittest.mock import patch
 import numpy as np
 import pandas as pd
 
-from planner import build_portfolio, simulate_plan, _expected_best
+from planner import build_posterior_portfolio as build_portfolio, simulate_plan, _expected_best
 from beliefs import Beliefs
 import planner
 
@@ -146,6 +146,39 @@ class PlannerTests(unittest.TestCase):
         self.assertTrue(timed_out[0])
         self.assertTrue(plan)
         self.assertGreater(simulate_plan(profile, plan, {}, beliefs)[0], 0)
+
+
+class ShippedMvaTests(unittest.TestCase):
+    def test_budget_contacts_and_nonoverlap(self):
+        profile, stats = profile_and_stats()
+        beliefs = KnownBeliefs({(*cell, 'tariff_9'): .2 for cell in stats})
+        resources = {'remaining_budget': 180, 'remaining_contacts': 25}
+        rows = planner.build_portfolio(beliefs, stats, resources)
+        net, detail = simulate_plan(profile, rows, resources, beliefs)
+        self.assertGreater(net, 0)
+        self.assertLessEqual(detail['total_cost'], 180)
+        self.assertLessEqual(detail['total_contacts'], 25)
+        self.assertEqual(detail['total_contacts'], detail['unique_customers_targeted'])
+        self.assertEqual(rows, planner.build_portfolio(beliefs, stats, resources))
+
+    def test_free_push_and_negative_cutoff(self):
+        profile, stats = profile_and_stats()
+        resources = {'remaining_budget': 0, 'remaining_contacts': 20}
+        positive = KnownBeliefs({(*cell, 'tariff_9'): .1 for cell in stats})
+        rows = planner.build_portfolio(positive, stats, resources)
+        self.assertTrue(rows)
+        self.assertTrue(all(row['channel'] == 'push' for row in rows))
+        negative = KnownBeliefs({(*cell, 'tariff_9'): -.1 for cell in stats})
+        self.assertEqual(planner.build_portfolio(negative, stats, resources), [])
+
+    def test_positive_unobserved_prior_cannot_scale(self):
+        _, stats = profile_and_stats()
+        beliefs = Beliefs(prior_mu=.5)
+        beliefs.register([(*next(iter(stats)), 'tariff_9')])
+        resources = {'remaining_budget': 100000, 'remaining_contacts': 15000}
+        self.assertEqual(planner.build_portfolio(beliefs, stats, resources, k=0), [])
+        resources['deadline'] = -1
+        self.assertEqual(planner.build_portfolio(beliefs, stats, resources), [])
 
 
 if __name__ == "__main__":

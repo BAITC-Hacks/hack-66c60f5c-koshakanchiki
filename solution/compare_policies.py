@@ -146,6 +146,12 @@ def summarize(records):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--baseline", default="a5084f3", help="Immutable MVA commit")
+    parser.add_argument("--world-start", type=int, default=100, help="First world seed; freeze before running")
+    parser.add_argument("--timing-world", type=int, help="Timing-only world, default: world-start minus one")
+    parser.add_argument("--diagnostic", action="store_true",
+                        help="Describe control/bugfix effects; does not select or tune a policy")
+    parser.add_argument("--candidate-label", default="posterior_planner_v2",
+                        help="Description of the current Agent; source SHA identifies its exact code")
     parser.add_argument("--json", type=Path, default=ROOT / "comparison_results.json")
     parser.add_argument("--estimate-only", action="store_true")
     args = parser.parse_args()
@@ -166,22 +172,27 @@ def main():
         spec.loader.exec_module(module)
         # Only elapsed time is inspected. The estimate world is outside holdout.
         timing_started = time.perf_counter()
+        timing_world = args.world_start - 1 if args.timing_world is None else args.timing_world
         run_pair(module.Agent, profile, tariffs,
-                 make_world("close_effects", 99, keys, supported), noise_seed=999)
+                 make_world("close_effects", timing_world, keys, supported), noise_seed=999)
         pair_seconds = time.perf_counter() - timing_started
         estimated_full_seconds = pair_seconds * 600
         reduced = estimated_full_seconds > 600
-        world_seeds = list(range(100, 103 if reduced else 105))
+        world_seeds = list(range(args.world_start, args.world_start + (3 if reduced else 5)))
         noise_seeds = list(range(1000, 1010 if reduced else 1020))
         scope = {"families": list(FAMILIES), "world_seeds": world_seeds, "noise_seeds": noise_seeds,
                  "pairs": len(FAMILIES) * len(world_seeds) * len(noise_seeds),
                  "timing_pair_seconds": pair_seconds, "estimated_full_seconds": estimated_full_seconds,
+                 "timing_world": timing_world,
                  "reduced_for_runtime": reduced,
                  "selection_rule": "180 pairs if timing-only estimate of 600 pairs exceeds 600 seconds; otherwise 600"}
         print("SCOPE " + json.dumps(scope), flush=True)
         if args.estimate_only:
             return 0
         result = {"status": "running", "scope": scope, "source_sha256": initial_hashes,
+                  "purpose": "diagnostic_control_bugfixes" if args.diagnostic else "challenger_acceptance",
+                  "candidate_label": args.candidate_label,
+                  "policy_field_note": "v2_planner is the current Agent identified by candidate_label and SHA",
                   "baseline_commit": revision, "baseline_agent_sha256": hashlib.sha256(source).hexdigest(),
                   "shared_current_modules": ["beliefs.py", "candidates.py", "historical_candidates.json"],
                   "python": sys.version.split()[0], "numpy": np.__version__, "pandas": pd.__version__,
@@ -198,6 +209,12 @@ def main():
                 print(f"PROGRESS {family} world={world_seed}: {len(result['records'])}/{scope['pairs']} pairs; "
                       f"elapsed={time.perf_counter() - started:.1f}s", flush=True)
         result["summary"] = summarize(result["records"])
+        if args.diagnostic:
+            result["summary"]["interpretation"] = (
+                "Diagnostic of the final control with required correctness fixes. "
+                "A zero interval is compatible with unchanged control; performance_acceptance "
+                "is the original challenger statistic, not a new policy-selection decision."
+            )
         result["source_unchanged"] = hashes() == initial_hashes
         result["elapsed_seconds"] = time.perf_counter() - started
         result["status"] = "complete" if result["source_unchanged"] else "invalid_source_changed"
