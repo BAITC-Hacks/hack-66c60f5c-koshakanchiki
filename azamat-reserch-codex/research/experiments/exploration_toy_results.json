@@ -1,0 +1,156 @@
+{
+  "seeds": 100,
+  "scenarios": {
+    "sparse_winners": [
+      -0.12,
+      -0.1,
+      -0.08,
+      -0.04,
+      0.0,
+      0.03,
+      0.15,
+      0.25
+    ],
+    "near_ties": [
+      0.08,
+      0.08,
+      0.08,
+      0.08,
+      0.08,
+      0.08,
+      0.08,
+      0.08
+    ],
+    "all_negative": [
+      -0.04,
+      -0.06,
+      -0.08,
+      -0.1,
+      -0.12,
+      -0.14,
+      -0.16,
+      -0.18
+    ],
+    "weak_positive": [
+      0.003,
+      0.005,
+      0.007,
+      0.009,
+      0.011,
+      0.013,
+      0.015,
+      0.017
+    ]
+  },
+  "elapsed_seconds": 6.5,
+  "results": [
+    {
+      "scenario": "sparse_winners",
+      "policy": "fixed",
+      "mean_net": 18002015.76,
+      "p10_net": 17811094.18,
+      "positive_runs": 100,
+      "mean_pilots": 20.0,
+      "mean_pilot_contacts": 2400.0
+    },
+    {
+      "scenario": "sparse_winners",
+      "policy": "thompson",
+      "mean_net": 17688664.24,
+      "p10_net": 16180840.0,
+      "positive_runs": 100,
+      "mean_pilots": 20.0,
+      "mean_pilot_contacts": 2400.0
+    },
+    {
+      "scenario": "sparse_winners",
+      "policy": "one_step",
+      "mean_net": 18427301.08,
+      "p10_net": 17954654.4,
+      "positive_runs": 100,
+      "mean_pilots": 11.33,
+      "mean_pilot_contacts": 1602.0
+    },
+    {
+      "scenario": "near_ties",
+      "policy": "fixed",
+      "mean_net": 8246417.68,
+      "p10_net": 7150625.46,
+      "positive_runs": 100,
+      "mean_pilots": 20.0,
+      "mean_pilot_contacts": 2400.0
+    },
+    {
+      "scenario": "near_ties",
+      "policy": "thompson",
+      "mean_net": 7967570.63,
+      "p10_net": 6780705.08,
+      "positive_runs": 100,
+      "mean_pilots": 20.0,
+      "mean_pilot_contacts": 2400.0
+    },
+    {
+      "scenario": "near_ties",
+      "policy": "one_step",
+      "mean_net": 8371171.03,
+      "p10_net": 7142132.25,
+      "positive_runs": 100,
+      "mean_pilots": 14.14,
+      "mean_pilot_contacts": 2132.0
+    },
+    {
+      "scenario": "all_negative",
+      "policy": "fixed",
+      "mean_net": -1754225.56,
+      "p10_net": -2085088.61,
+      "positive_runs": 0,
+      "mean_pilots": 20.0,
+      "mean_pilot_contacts": 2400.0
+    },
+    {
+      "scenario": "all_negative",
+      "policy": "thompson",
+      "mean_net": -1348946.62,
+      "p10_net": -1668861.26,
+      "positive_runs": 0,
+      "mean_pilots": 20.0,
+      "mean_pilot_contacts": 2400.0
+    },
+    {
+      "scenario": "all_negative",
+      "policy": "one_step",
+      "mean_net": -1053394.9,
+      "p10_net": -1396713.75,
+      "positive_runs": 0,
+      "mean_pilots": 11.82,
+      "mean_pilot_contacts": 1700.8
+    },
+    {
+      "scenario": "weak_positive",
+      "policy": "fixed",
+      "mean_net": 1128051.91,
+      "p10_net": 692871.21,
+      "positive_runs": 100,
+      "mean_pilots": 20.0,
+      "mean_pilot_contacts": 2400.0
+    },
+    {
+      "scenario": "weak_positive",
+      "policy": "thompson",
+      "mean_net": 1057760.08,
+      "p10_net": 664218.49,
+      "positive_runs": 100,
+      "mean_pilots": 20.0,
+      "mean_pilot_contacts": 2400.0
+    },
+    {
+      "scenario": "weak_positive",
+      "policy": "one_step",
+      "mean_net": 1095408.69,
+      "p10_net": 690383.7,
+      "positive_runs": 100,
+      "mean_pilots": 15.39,
+      "mean_pilot_contacts": 2370.0
+    }
+  ]
+}

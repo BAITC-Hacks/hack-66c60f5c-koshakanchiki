@@ -1,0 +1,155 @@
+{
+  "scope": "public mechanics; invented data and impact models; no hidden-state access",
+  "python_libraries": {
+    "pandas": "3.0.6",
+    "numpy": "2.5.3"
+  },
+  "checks_passed": 19,
+  "checks": [
+    {
+      "name": "data_segment_does_not_change_ratio_within_effect_cell",
+      "passed": true,
+      "lift_ratios": [
+        0.5,
+        0.5
+      ],
+      "absolute_lifts": [
+        50.0,
+        5000.0
+      ]
+    },
+    {
+      "name": "data_filter_changes_arpu_sum_and_gross_lift",
+      "passed": true,
+      "lite_gross": 50.0,
+      "heavy_gross": 5000.0
+    },
+    {
+      "name": "pilot_ratio_is_unweighted_by_arpu",
+      "passed": true,
+      "observed_ratio": -0.5412453703345037,
+      "true_unweighted_ratio": 0.04999999999999999,
+      "true_arpu_weighted_ratio": -0.3910891089108911
+    },
+    {
+      "name": "mixed_pilot_mean_times_arpu_can_have_wrong_monetary_sign",
+      "passed": true,
+      "noiseless_mean_times_arpu": 504.9999999999999,
+      "actual_gross": -3950.0,
+      "reported_observed_lift_total": -5466.578240378488
+    },
+    {
+      "name": "pilot_actual_sample_can_be_below_requested_minimum",
+      "passed": true,
+      "requested": 10,
+      "actual": 2
+    },
+    {
+      "name": "negative_lift_not_clamped_against_no_action",
+      "passed": true,
+      "gross": -20.0,
+      "negative_share_pct": 100.0
+    },
+    {
+      "name": "duplicate_contacts_cost_money_and_reach_without_double_lift",
+      "passed": true,
+      "contacts": 4,
+      "unique": 2,
+      "cost": 16.0,
+      "gross": 130.0
+    },
+    {
+      "name": "later_better_campaign_replaces_negative_for_same_customer",
+      "passed": true,
+      "gross": 100.0,
+      "contacts": 4
+    },
+    {
+      "name": "campaign_cap_uses_smallest_ids_not_highest_arpu",
+      "passed": true,
+      "contacts": 5000,
+      "gross": 250000.0,
+      "highest_id_arpu": 1000000.0
+    },
+    {
+      "name": "repeating_broad_filter_does_not_page_to_new_customers",
+      "passed": true,
+      "contacts": 15000,
+      "unique": 5000
+    },
+    {
+      "name": "order_changes_budget_allocation",
+      "passed": true,
+      "call_then_sms_contacts": [
+        625,
+        0
+      ],
+      "sms_then_call_contacts": [
+        5000,
+        500
+      ]
+    },
+    {
+      "name": "nonempty_explicit_ids_override_filters_empty_list_does_not",
+      "passed": true,
+      "explicit_ids_result": [
+        1
+      ],
+      "empty_list_count": 2
+    },
+    {
+      "name": "pilots_can_recontact_same_people",
+      "passed": true,
+      "contacts": 20,
+      "unique": 10
+    },
+    {
+      "name": "seeds_change_sample_and_noise_not_fixed_effect",
+      "passed": true,
+      "observed_ratios": [
+        0.7977103992414278,
+        0.5560203555572452
+      ],
+      "true_gross_values": [
+        1300.0,
+        1300.0
+      ]
+    },
+    {
+      "name": "mock_fallback_handles_nan_tariff_and_nan_arpu_in_object_columns",
+      "passed": true,
+      "per_customer_lifts": [
+        0.0,
+        8.000000000000002,
+        50.0
+      ]
+    },
+    {
+      "name": "missing_values_excluded_by_equality_filters_nan_filter_means_no_filter",
+      "passed": true,
+      "selected_known_ids": [
+        2
+      ],
+      "nan_filter_count": 3
+    },
+    {
+      "name": "pd_na_filter_is_not_equivalent_to_none_in_pilot_filter",
+      "passed": true,
+      "pd_na_outcome": "selected_rows=0",
+      "scoring_filter_rows": 3,
+      "note": "Outcome depends on pandas dtype/version; use None for absent API filters."
+    },
+    {
+      "name": "fallback_errors_propagate_from_scorer",
+      "passed": true,
+      "error_type": "KeyError",
+      "note": "Invented strict fallback, not a claim about hidden evaluator."
+    },
+    {
+      "name": "zero_arpu_contacts_can_only_spend_budget_for_fixed_ratio",
+      "passed": true,
+      "gross": 0.0,
+      "net": -8.0
+    }
+  ]
+}

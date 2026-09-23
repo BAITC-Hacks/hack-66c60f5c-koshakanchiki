@@ -1,0 +1,63 @@
+{
+  "coverage": {
+    "actions_with_at_least_10_observations": 259,
+    "actions_with_at_least_10_observations_pct": 20.56,
+    "cells_over_5000_profiles": {
+      "cells": 0,
+      "predicted_arpu_sum": 0,
+      "profiles": 0
+    },
+    "cells_under_10_profiles": {
+      "cells": 9,
+      "predicted_arpu_sum": 264219.664,
+      "profiles": 60
+    },
+    "cells_under_150_profiles": {
+      "cells": 42,
+      "predicted_arpu_sum": 6789876.146,
+      "profiles": 1345
+    },
+    "historically_supported_actions": 456,
+    "historically_supported_actions_pct": 36.19,
+    "no_historically_supported_target": {
+      "cells": 3,
+      "predicted_arpu_sum": 153547.535,
+      "profiles": 30
+    },
+    "possible_nonself_actions": 1260
+  },
+  "current_audience": {
+    "all_predicted_arpu_sum": 150641084.246,
+    "all_profiles": 23441,
+    "dictionary_tariffs": 21,
+    "profiles_missing_cell_key": 100,
+    "valid_current_arpu_cells": 63,
+    "valid_predicted_arpu_sum": 150328543.997,
+    "valid_profiles": 23341
+  },
+  "history": {
+    "deduplicated_transition_rows": 14817,
+    "exact_duplicate_rows_removed": 6,
+    "nonpositive_previous_arpu_rows_excluded": 1407,
+    "observed_target_tariffs": 9,
+    "positive_previous_arpu_rows": 13410,
+    "raw_transition_rows": 14823
+  },
+  "method": {
+    "arpu_aggregation": "sum original predicted_arpu, rounded to 3 decimals",
+    "candidate_rule": "every dictionary target except current tariff",
+    "current_cells": "nonempty current_tariff and arpu_segment",
+    "historical_segment_mapping": {
+      "HIGH": "previous ARPU > 5000",
+      "LOW": "previous ARPU < 1000",
+      "MID": "1000 <= previous ARPU <= 5000"
+    },
+    "history_deduplication": "exact duplicate over all columns",
+    "history_support_filter": "AVG_ARPU_PREV_3M > 0",
+    "source_files": [
+      "customer_profile.csv",
+      "data/change_tariff.csv",
+      "tariff_dictionary.csv"
+    ]
+  }
+}
