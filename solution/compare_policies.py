@@ -2,7 +2,8 @@
 
 Truth belongs only to this harness.  Both policies receive identical public
 data/catalogues and paired pilot randomness; models are never passed to them.
-The scope is chosen from timing, before inspecting any performance outcome.
+The scope is chosen from timing, or fixed at 600 pairs with --full, before
+inspecting any performance outcome.
 """
 from __future__ import annotations
 
@@ -154,6 +155,8 @@ def main():
                         help="Description of the current Agent; source SHA identifies its exact code")
     parser.add_argument("--json", type=Path, default=ROOT / "comparison_results.json")
     parser.add_argument("--estimate-only", action="store_true")
+    parser.add_argument("--full", action="store_true",
+                        help="Force all 600 paired runs regardless of the timing estimate")
     args = parser.parse_args()
     os.chdir(ROOT)
     logging.disable(logging.WARNING)  # Repeated exclusion diagnostics add no information here.
@@ -177,7 +180,7 @@ def main():
                  make_world("close_effects", timing_world, keys, supported), noise_seed=999)
         pair_seconds = time.perf_counter() - timing_started
         estimated_full_seconds = pair_seconds * 600
-        reduced = estimated_full_seconds > 600
+        reduced = not args.full and estimated_full_seconds > 600
         world_seeds = list(range(args.world_start, args.world_start + (3 if reduced else 5)))
         noise_seeds = list(range(1000, 1010 if reduced else 1020))
         scope = {"families": list(FAMILIES), "world_seeds": world_seeds, "noise_seeds": noise_seeds,
@@ -185,7 +188,8 @@ def main():
                  "timing_pair_seconds": pair_seconds, "estimated_full_seconds": estimated_full_seconds,
                  "timing_world": timing_world,
                  "reduced_for_runtime": reduced,
-                 "selection_rule": "180 pairs if timing-only estimate of 600 pairs exceeds 600 seconds; otherwise 600"}
+                 "selection_rule": ("600 pairs explicitly requested with --full" if args.full else
+                                    "180 pairs if timing-only estimate of 600 pairs exceeds 600 seconds; otherwise 600")}
         print("SCOPE " + json.dumps(scope), flush=True)
         if args.estimate_only:
             return 0
@@ -194,7 +198,8 @@ def main():
                   "candidate_label": args.candidate_label,
                   "policy_field_note": "v2_planner is the current Agent identified by candidate_label and SHA",
                   "baseline_commit": revision, "baseline_agent_sha256": hashlib.sha256(source).hexdigest(),
-                  "shared_current_modules": ["beliefs.py", "candidates.py", "historical_candidates.json"],
+                  "shared_current_modules": ["beliefs.py", "candidates.py", "planner.py",
+                                             "historical_candidates.json"],
                   "python": sys.version.split()[0], "numpy": np.__version__, "pandas": pd.__version__,
                   "agent_seed": 42, "pilot_requests_and_observations_equal": True, "records": []}
         # Persist the chosen scope before examining any holdout result.

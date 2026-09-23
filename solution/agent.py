@@ -132,9 +132,9 @@ class Agent:
             # Establish a legal recovery plan before optional data preparation.
             fallback = _fallback(profile, tariffs, beliefs)
             stats = cell_stats(profile)
-            history_path = Path(__file__).parent / 'data' / 'change_tariff.csv'
-            if not history_path.is_file():
-                history_path = Path(__file__).with_name('historical_candidates.json')
+            # Build history offline; judging only reads the packaged artifact.
+            # The loader's JSON path returns zero ranks on missing/bad input.
+            history_path = Path(__file__).with_name('historical_candidates.json')
             history = load_or_build_historical_rank(history_path, tariffs)
             catalog = build_catalog(profile, tariffs, history)
             keys = [(c['from_tariff'], c['arpu_segment'], c['target']) for c in catalog]
