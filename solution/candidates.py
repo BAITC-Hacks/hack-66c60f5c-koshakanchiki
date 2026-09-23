@@ -39,6 +39,12 @@ SCHEMA = {
                   "target": "string", "support": "positive integer",
                   "median": "float in [-1, 3]", "rank": "float"},
 }
+TARIFF_FEATURES = (
+    "price_tariff", "Data_in_PKG", "Min_another_operator_in_PKG",
+    "Min_another_operator_and_city_in_PKG",
+)
+BASES = ("historical", "nearest_more_expensive", "nearest_not_more_expensive",
+         "unsupported_farthest")
 
 
 class HistoricalRank(dict):
@@ -234,6 +240,120 @@ def cell_stats(profile):
     return result
 
 
+def _has_history(hist_rank, key):
+    # A sparse ordinary dict denotes observed actions, including zero ranks.
+    # The loader's dense HistoricalRank uses explicit support instead.
+    support = getattr(hist_rank, "support", None)
+    return support.get(key, 0) > 0 if support is not None else key in hist_rank
+
+
+def _tariff_geometry(tariffs):
+    required = {"tariff_plan_code", *TARIFF_FEATURES}
+    if not required.issubset(tariffs.columns):
+        raise ValueError(f"Tariffs are missing columns: {sorted(required - set(tariffs.columns))}")
+    frame = tariffs.loc[:, ["tariff_plan_code", *TARIFF_FEATURES]].copy()
+    if frame["tariff_plan_code"].isna().any():
+        raise ValueError("Missing tariff code")
+    frame["tariff_plan_code"] = frame["tariff_plan_code"].astype(str)
+    if frame["tariff_plan_code"].duplicated().any():
+        raise ValueError("Duplicate tariff code")
+    frame = frame.sort_values("tariff_plan_code", kind="stable")
+    codes = frame["tariff_plan_code"].tolist()
+    values = frame[list(TARIFF_FEATURES)].to_numpy(dtype=float)
+    if not np.isfinite(values).all() or (values < 0).any():
+        raise ValueError("Tariff features must be finite and nonnegative")
+    if not codes:
+        return codes, values, np.empty((0, 0))
+    logged = np.log1p(values)
+    active = np.ptp(logged, axis=0) > 0
+    standardized = logged[:, active]
+    if active.any():
+        standardized = (standardized - standardized.mean(axis=0)) / standardized.std(axis=0)
+    distances = np.linalg.norm(standardized[:, None, :] - standardized[None, :, :], axis=2)
+    return codes, values, distances
+
+
+def _reserve_overview(queue, hist_rank):
+    """Keep the best six, then promote two distinct diversity actions."""
+    selected = list(queue[:6])
+    remaining = list(queue[6:])
+
+    def key(action):
+        return action["from_tariff"], action["arpu_segment"], action["target"]
+
+    def candidates(predicate):
+        used_cells = {(a["from_tariff"], a["arpu_segment"]) for a in selected}
+        eligible = [a for a in remaining if predicate(a)]
+        # Prefer a new cell; within either group retain the original queue order.
+        return sorted(eligible, key=lambda a: (a["from_tariff"], a["arpu_segment"]) in used_cells)
+
+    nonhigh = candidates(lambda a: a["arpu_segment"] != "HIGH")
+    unknown = candidates(lambda a: not _has_history(hist_rank, key(a)))
+    # Avoid consuming the sole unknown action in the non-HIGH slot if another
+    # non-HIGH action can occupy it. Each reserve must be a different action.
+    outside = next((a for a in nonhigh if any(key(b) != key(a) for b in unknown)),
+                   nonhigh[0] if nonhigh else None)
+    if outside is not None:
+        selected.append(outside)
+        remaining.remove(outside)
+    unknown = candidates(lambda a: not _has_history(hist_rank, key(a)))
+    if unknown:
+        selected.append(unknown[0])
+        remaining.remove(unknown[0])
+    return (selected + remaining)[:40]
+
+
+def build_catalog(profile, tariffs, hist_rank):
+    """Return up to 40 distinct actions, with at most four per cell.
+
+    Each basis has a queue of cells ordered by descending A_sum (ties by cell
+    key). Round-robin over the four basis queues balances reasons for trying a
+    target. Within a cell, a target already selected for an earlier basis is
+    skipped in favor of the next eligible target. The first six keep that order;
+    slots seven/eight reserve a non-HIGH and an unsupported action when possible.
+    Reserves are selected before truncating the full queue to 40.
+
+    Pass the rank dict returned by load_or_build_historical_rank directly to
+    preserve its support metadata. For a sparse ordinary dict, key membership
+    denotes support, even when its rank is zero. History never removes a cell.
+    """
+    cells = cell_stats(profile)
+    codes, values, distances = _tariff_geometry(tariffs)
+    if len(codes) < 2:
+        return []
+    positions = {code: index for index, code in enumerate(codes)}
+    lanes = [[] for _ in BASES]
+    for (source, segment), stats in sorted(cells.items(), key=lambda item: (-item[1]["A_sum"], item[0])):
+        if source not in positions:
+            LOGGER.warning("Skipping cell with tariff absent from dictionary: %s", (source, segment))
+            continue
+        current = positions[source]
+        others = [j for j, code in enumerate(codes) if code != source]
+        historical = [j for j in others if _has_history(hist_rank, (source, segment, codes[j]))]
+        expensive = [j for j in others if values[j, 0] > values[current, 0]]
+        cheaper = [j for j in others if values[j, 0] <= values[current, 0]
+                   and np.any(values[j, 1:] != values[current, 1:])]
+        unseen = [j for j in others if not _has_history(hist_rank, (source, segment, codes[j]))]
+        options = [
+            sorted(historical, key=lambda j: (-hist_rank.get((source, segment, codes[j]), 0.0), codes[j])),
+            sorted(expensive, key=lambda j: (distances[current, j], codes[j])),
+            sorted(cheaper, key=lambda j: (distances[current, j], codes[j])),
+            sorted(unseen, key=lambda j: (-distances[current, j], codes[j])),
+        ]
+        used = set()
+        for index, ordered in enumerate(options):
+            target = next((codes[j] for j in ordered if codes[j] not in used), None)
+            if target is None:
+                continue
+            used.add(target)
+            lanes[index].append({"from_tariff": source, "arpu_segment": segment,
+                                 "target": target, "basis": BASES[index],
+                                 "prior_rank": float(hist_rank.get((source, segment, target), 0.0))})
+    queue = [lane[index] for index in range(max(map(len, lanes), default=0))
+             for lane in lanes if index < len(lane)]
+    return _reserve_overview(queue, hist_rank)
+
+
 def _main():
     import argparse
 
@@ -252,9 +372,21 @@ def _main():
     for key in sorted(ranks.support, key=lambda key: (-ranks[key], key))[:20]:
         print(f"{key[0]:>10} {key[1]:>4} -> {key[2]:<10} "
               f"support={ranks.support[key]:5d} rank={ranks[key]:.8f}")
-    cells = cell_stats(pd.read_csv(args.profile))
+    profile = pd.read_csv(args.profile)
+    cells = cell_stats(profile)
     print(json.dumps({"history": ranks.report, "profile": cells.report,
                       "cells": len(cells)}, indent=2))
+    catalog = build_catalog(profile, tariffs, ranks)
+    keys = [(a["from_tariff"], a["arpu_segment"], a["target"]) for a in catalog]
+    assert catalog, "Empty catalog"
+    assert len(keys) == len(set(keys)) <= 40
+    assert all(source != target for source, _, target in keys)
+    assert all(sum(k[:2] == key for k in keys) <= 4 for key in cells)
+    print("First eight catalog actions:")
+    print(json.dumps(catalog[:8], indent=2))
+    print(f"Catalog: {len(catalog)} actions; "
+          f"non-HIGH in first eight: {any(k[1] != 'HIGH' for k in keys[:8])}; "
+          f"unsupported in first eight: {any(not _has_history(ranks, k) for k in keys[:8])}")
 
 
 if __name__ == "__main__":
