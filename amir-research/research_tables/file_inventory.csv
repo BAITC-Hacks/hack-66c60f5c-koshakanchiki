@@ -1,7 +1,0 @@
-file,rows,columns,unique_ids,duplicate_rows,null_cells,sha256
-customer_profile.csv,23441,29,23441.0,0,3940,a85e9badf4cb51b1ba8c43a868498b6fa8075509f3cd8e19ef72e1c25a6dc815
-data/change_tariff.csv,14823,6,14817.0,6,0,c52d7dad11fccc7425afe6d36a44a1fa03c8cc148be2039ce264d0c5c100f230
-data/traffic.csv,75736,30,14875.0,0,68031,cb0a3f8827d8be6989b65dc5bf0b7c901047cf64e485f4ee74e3c24787ee846c
-data/arpu_monthly.csv,78798,3,14991.0,84,0,83d96b61c38a8bf7cdf5f07bc4f17f7f2f39885559c496fc28c266cef8ad3c4a
-data/dict_tariff.csv,21,5,,0,0,a34d81dacffbb937ddd542e87d421afcea4842379acfbad55b8d59bdf710f4be
-tariff_dictionary.csv,21,6,,0,0,d3e6588f5d8e8e51202b4a77b2d4c0243080965a82d8e1d9411149220dd9df1c

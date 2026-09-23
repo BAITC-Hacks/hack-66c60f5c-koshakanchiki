@@ -1,0 +1,108 @@
+{
+  "checked_on": "2026-09-23",
+  "sources": [
+    {
+      "url": "https://edu.astanahub.com/hackathons/df4743f5-c492-415c-b45a-1f13adb78e06?tab=regulations",
+      "status": 200,
+      "bytes": 785311,
+      "sha256": "59d63d4c7cb05815b25a59567aa5264818ea8e001e83abd0793b45b98841b1d8",
+      "checked_on": "2026-09-23",
+      "scope": "HTTP 200; embedded public regulation text decoded and relevant sections read",
+      "finding": "3.5: development 13:00–18:00 Astana; 5.4.12: case-specific AI requirements take precedence; 5.4.13–16: cutoff 18:00, README and independently runnable delivery required."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/heymarco/OmegaUCB/master/components/bandits/wucb.py",
+      "status": 200,
+      "bytes": 3995,
+      "sha256": "574aeac25ea6b3677b959a1d7d4f69205d99ef371171a23fec230d928fa680c9",
+      "checked_on": "2026-09-23",
+      "scope": "Read WUCBArm/WUCB implementations; no dependency installation or end-to-end run",
+      "finding": "Ratio index, zero-cost branch, bounded-reward formula, components.bandits.abstract import, np.infty and np.alltrue accesses."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/heymarco/OmegaUCB/master/components/bandits/abstract.py",
+      "status": 200,
+      "bytes": 1395,
+      "sha256": "f8812e32c7bf221537053979c8ad86b2c94d3cbca4e084ea07ea2d2bfffb86eb",
+      "checked_on": "2026-09-23",
+      "scope": "Read abstract interfaces; no integration run",
+      "finding": "Required import/package structure differs from the suggested vendor-only download."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/maks-sh/scikit-uplift/master/sklift/models/models.py",
+      "status": 200,
+      "bytes": 26357,
+      "sha256": "768a084205612f5b33a4e4be2a521006d3ed2e9cf3ca143eb87e77d61fa45576",
+      "checked_on": "2026-09-23",
+      "scope": "Read TwoModels fit/predict sections",
+      "finding": "Requires treatment indicator and separate control/treatment fitting; regression target is supported."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/abhi-iitg/impactiq-campaign-uplift-optimization/main/src/power_analysis.py",
+      "status": 200,
+      "bytes": 1914,
+      "sha256": "f2785e936b217921f2f8a9348624b905a9a229ac5138db8421a78c269e5c7abb",
+      "checked_on": "2026-09-23",
+      "scope": "Read full utility source",
+      "finding": "Two-group binary conversion power/MDE calculations; not the continuous aggregate Gaussian pilot likelihood."
+    },
+    {
+      "url": "https://drive.google.com/uc?export=download&id=105Rnhzg3Q5tKjfGZIddRqY13kmq_w4r_",
+      "status": 200,
+      "bytes": 55704,
+      "sha256": "90ee9b4e214369400c6af4b526878a33dbb8c830c67bee8abb6cf6b1ebebefdf",
+      "checked_on": "2026-09-23",
+      "scope": "Downloaded PDF parsed with pypdf 6.19.0; bytes equal local project-context event PDF",
+      "finding": "Five-hour implementation, README, organizer-provided GitHub repository, platform Submit solution step."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/CLAHRCWessex/subset-selection-problem/master/README.md",
+      "status": 200,
+      "bytes": 1381,
+      "sha256": "91b5fc818761ba74c6b63d4ae11596c63c781d009f6eed885e743a51b255fdaa",
+      "checked_on": "2026-09-23",
+      "scope": "Read author README, not notebooks or entire OCBA article",
+      "finding": "Ranking/selection of best subset; no Beeline budget/contact/filter integration established."
+    },
+    {
+      "url": "https://github.com/heymarco/OmegaUCB",
+      "checked_on": "2026-09-23",
+      "scope": "Author README via browser",
+      "finding": "Budgeted MAB with unknown expected reward and cost; not proof for this simulator."
+    },
+    {
+      "url": "https://github.com/abhi-iitg/impactiq-campaign-uplift-optimization",
+      "checked_on": "2026-09-23",
+      "scope": "Author README via browser",
+      "finding": "Demonstration on randomized Hillstrom; profit-aware targeting concept, not validated Beeline solution."
+    },
+    {
+      "url": "https://arxiv.org/abs/2403.15371v3",
+      "checked_on": "2026-09-23",
+      "scope": "Title, version and abstract read; full text not reviewed in this synthesis",
+      "title": "Can large language models explore in-context?",
+      "use": "Limited corroboration of task-specific risks; no universal claim about all LLMs."
+    },
+    {
+      "url": "https://arxiv.org/abs/2502.00225v4",
+      "checked_on": "2026-09-23",
+      "scope": "Title, version and abstract read; full text not reviewed in this synthesis",
+      "title": "Should You Use Your Large Language Model to Explore or Exploit?",
+      "use": "Limited corroboration of task-specific risks; no universal claim about all LLMs."
+    },
+    {
+      "url": "https://arxiv.org/abs/2608.16707v1",
+      "checked_on": "2026-09-23",
+      "scope": "Title, version and abstract read; full text not reviewed in this synthesis",
+      "title": "Semantic Bandits: In-Context Exploration-Exploitation is Biased by Semantic Priors",
+      "use": "Limited corroboration of task-specific risks; no universal claim about all LLMs."
+    }
+  ],
+  "access_limits": [
+    "Browser open failed for AstanaHub regulations and Drive PDF; direct HTTPS download succeeded. Regulation parsed from embedded public page data.",
+    "uplift-modeling.com documentation open failed; primary GitHub source read instead.",
+    "Closed organizer chat and case-specific authenticated card not accessed; no claim that absent public updates do not exist.",
+    "Exact-name web searches for Beeline Tariff Marketing Campaigns and HackAlem scoring_core.py did not reveal a newer public package; local copies of seven core files were byte-identical.",
+    "No external library was installed or competition agent benchmarked; repository popularity/license lists were not used as evidence of suitability."
+  ]
+}
