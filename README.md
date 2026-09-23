@@ -1,4 +1,4 @@
-# HackAlem AI — Кошаканчики
+# HackAlem AI — Koshakanchiki
 
 Кейс **Beeline Tariff Marketing Campaigns**. В репозитории находятся итоговое исследование команды и исходные материалы задачи. Данные кейса синтетические.
 
