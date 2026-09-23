@@ -1,0 +1,23 @@
+{
+  "date": "2026-09-23",
+  "python_stdlib_experiments": "3.13.6 (v3.13.6:4e665351082, Aug  6 2025, 11:22:35) [Clang 16.0.0 (clang-1600.0.26.6)]",
+  "portfolio_cases": 20,
+  "portfolio_results_reproduced": true,
+  "exploration_runs": 1200,
+  "exploration_results_reproduced": true,
+  "csv_audit_reproduced": true,
+  "agent_implemented": false,
+  "official_agent_score_measured": false,
+  "scripts_sha256": {
+    "exploration_toy.py": "89f8c0c6725ecdd7e467e10d66bfc2c2e6d4ee2b38375fa4d6be56f07229faf6",
+    "portfolio_toy.py": "13a4f4655bcc3eaf6c82b42680539cdf4edc80f8fab1a723e9addccf5be88d5e",
+    "priors_audit.py": "e07e769dcc4f630fcb6975ec0e66a4d7a947d0be177139ccbc919e3b0611a372"
+  },
+  "source_csv_sha256": {
+    "customer_profile.csv": "a85e9badf4cb51b1ba8c43a868498b6fa8075509f3cd8e19ef72e1c25a6dc815",
+    "data/change_tariff.csv": "c52d7dad11fccc7425afe6d36a44a1fa03c8cc148be2039ce264d0c5c100f230",
+    "tariff_dictionary.csv": "d3e6588f5d8e8e51202b4a77b2d4c0243080965a82d8e1d9411149220dd9df1c"
+  },
+  "python_exploration_experiment": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
+  "numpy_exploration_experiment": "2.3.5"
+}

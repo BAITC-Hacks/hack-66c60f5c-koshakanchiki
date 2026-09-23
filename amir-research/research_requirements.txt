@@ -1,0 +1,4 @@
+# Reproducibility of the research scripts and PDF inspection, not agent requirements.
+numpy==2.5.3
+pandas==3.0.6
+pypdf==6.19.0
